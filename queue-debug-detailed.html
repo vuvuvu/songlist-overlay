@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Queue Debug - Detailed Analysis</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, height=768">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f0f0f0;
+        }
+        .debug-section {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #007cba;
+        }
+        .error { border-left-color: #dc3545; }
+        .success { border-left-color: #28a745; }
+        .warning { border-left-color: #ffc107; }
+        .code {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 5px 10px;
+            border-radius: 3px;
+            color: white;
+            font-weight: bold;
+        }
+        .status.connected { background: #28a745; }
+        .status.disconnected { background: #dc3545; }
+        .status.connecting { background: #ffc107; color: black; }
+    </style>
+</head>
+<body>
+    <h1>StreamerSongList Queue Debug Tool</h1>
+    
+    <div class="debug-section">
+        <h3>Connection Status</h3>
+        <div id="connection-status" class="status disconnected">Checking...</div>
+        <div id="connection-details"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Configuration</h3>
+        <div id="config-info"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>API Response</h3>
+        <div id="api-response"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>WebSocket Events</h3>
+        <div id="websocket-events"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Queue Data</h3>
+        <div id="queue-data"></div>
+    </div>
+    
+    <div class="debug-section">
+        <h3>Console Logs</h3>
+        <div id="console-logs" class="code"></div>
+    </div>
+    
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        // Override console.log to capture logs
+        const originalLog = console.log;
+        const originalError = console.error;
+        const originalWarn = console.warn;
+        let logs = [];
+        
+        function addLog(type, message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push(`[${timestamp}] ${type.toUpperCase()}: ${message}`);
+            updateLogsDisplay();
+        }
+        
+        console.log = function(...args) {
+            addLog('log', args.join(' '));
+            originalLog.apply(console, args);
+        };
+        
+        console.error = function(...args) {
+            addLog('error', args.join(' '));
+            originalError.apply(console, args);
+        };
+        
+        console.warn = function(...args) {
+            addLog('warn', args.join(' '));
+            originalWarn.apply(console, args);
+        };
+        
+        function updateLogsDisplay() {
+            $('#console-logs').text(logs.slice(-20).join('\n'));
+        }
+        
+        // Configuration from streamersonglist.js
+        const apiUrl = "https://api.streamersonglist.com/v1/";
+        const streamerName = "belleune";
+        const streamerId = 287;
+        const allCaps = true;
+        const maxQueueItems = 5;
+        const showMore = true;
+        const queueEmptyMessage = "Queue is empty";
+        
+        // Display configuration
+        $('#config-info').html(`
+            <div class="code">
+API URL: ${apiUrl}
+Streamer Name: ${streamerName}
+Streamer ID: ${streamerId}
+All Caps: ${allCaps}
+Max Queue Items: ${maxQueueItems}
+Show More: ${showMore}
+Empty Message: ${queueEmptyMessage}
+            </div>
+        `);
+        
+        // Test API connection
+        function testApiConnection() {
+            const url = apiUrl + "streamers/" + streamerName + "/queue";
+            console.log('Testing API connection to:', url);
+            
+            $.ajax({
+                url: url,
+                timeout: 10000,
+                success: function(data) {
+                    console.log('API connection successful');
+                    $('#api-response').html(`
+                        <div class="success">✓ API Connection Successful</div>
+                        <div class="code">${JSON.stringify(data, null, 2)}</div>
+                    `);
+                    
+                    // Display queue data
+                    if (data && data.list) {
+                        $('#queue-data').html(`
+                            <div class="success">Queue Length: ${data.list.length}</div>
+                            <div class="code">${JSON.stringify(data.list, null, 2)}</div>
+                        `);
+                    } else {
+                        $('#queue-data').html('<div class="warning">No queue data found in response</div>');
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('API connection failed:', textStatus, errorThrown);
+                    $('#api-response').html(`
+                        <div class="error">✗ API Connection Failed</div>
+                        <div class="code">Status: ${jqXHR.status}\nError: ${textStatus}\nThrown: ${errorThrown}\nResponse: ${jqXHR.responseText}</div>
+                    `);
+                }
+            });
+        }
+        
+        // Test WebSocket connection
+        function testWebSocketConnection() {
+            console.log('Testing WebSocket connection...');
+            let wsEvents = [];
+            
+            function addWsEvent(event, data) {
+                const timestamp = new Date().toLocaleTimeString();
+                wsEvents.push(`[${timestamp}] ${event}: ${data || ''}`);
+                $('#websocket-events').html('<div class="code">' + wsEvents.join('\n') + '</div>');
+            }
+            
+            try {
+                const socket = io("https://api.streamersonglist.com", {
+                    transports: ['websocket', 'polling'],
+                    upgrade: true,
+                    timeout: 10000,
+                    forceNew: true,
+                    autoConnect: true,
+                    reconnection: true,
+                    reconnectionAttempts: 3,
+                    reconnectionDelay: 1000
+                });
+                
+                socket.on('connect', () => {
+                    console.log('WebSocket connected');
+                    $('#connection-status').removeClass('disconnected connecting').addClass('connected').text('Connected');
+                    addWsEvent('connect', 'Successfully connected to WebSocket');
+                    
+                    socket.emit('join-room', `${streamerId}`);
+                    addWsEvent('join-room', `Joined room ${streamerId}`);
+                });
+                
+                socket.on('disconnect', (reason) => {
+                    console.log('WebSocket disconnected:', reason);
+                    $('#connection-status').removeClass('connected connecting').addClass('disconnected').text('Disconnected');
+                    addWsEvent('disconnect', reason);
+                });
+                
+                socket.on('connect_error', (error) => {
+                    console.error('WebSocket connection error:', error);
+                    $('#connection-status').removeClass('connected connecting').addClass('disconnected').text('Connection Error');
+                    addWsEvent('connect_error', error.message || error);
+                });
+                
+                socket.on('reconnect', (attemptNumber) => {
+                    console.log('WebSocket reconnected after', attemptNumber, 'attempts');
+                    addWsEvent('reconnect', `Reconnected after ${attemptNumber} attempts`);
+                });
+                
+                socket.on('queue-update', (data) => {
+                    console.log('Queue update received:', data);
+                    addWsEvent('queue-update', JSON.stringify(data));
+                });
+                
+                // Set connecting status
+                $('#connection-status').removeClass('disconnected connected').addClass('connecting').text('Connecting...');
+                addWsEvent('init', 'Attempting WebSocket connection...');
+                
+            } catch (error) {
+                console.error('WebSocket setup failed:', error);
+                $('#connection-status').removeClass('connected connecting').addClass('disconnected').text('Setup Failed');
+                addWsEvent('error', 'WebSocket setup failed: ' + error.message);
+            }
+        }
+        
+        // Initialize debug
+        $(document).ready(function() {
+            console.log('Debug tool initialized');
+            testApiConnection();
+            testWebSocketConnection();
+        });
+    </script>
+</body>
+</html>

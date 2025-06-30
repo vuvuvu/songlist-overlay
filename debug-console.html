@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Console - StreamerSongList</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+        .debug-info {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .console-output {
+            background-color: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        #queue-wrapper {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+</head>
+<body>
+    <h1>Debug Console - StreamerSongList Queue</h1>
+    
+    <div class="debug-info">
+        <h3>Instructions:</h3>
+        <p>1. Open your browser's Developer Tools (F12)</p>
+        <p>2. Go to the Console tab</p>
+        <p>3. Watch for debug output showing the song data structure</p>
+        <p>4. Look for "Creating song div for song object:" messages</p>
+    </div>
+    
+    <div class="debug-info">
+        <h3>Status:</h3>
+        <div id="status">Loading...</div>
+    </div>
+    
+    <div id="queue-wrapper"></div>
+    
+    <script src="lib/streamersonglist.js"></script>
+    
+    <script>
+        // Override console.log to also display in the page
+        const originalLog = console.log;
+        const consoleOutput = document.createElement('div');
+        consoleOutput.className = 'console-output';
+        consoleOutput.innerHTML = '<h3>Console Output:</h3>';
+        document.body.appendChild(consoleOutput);
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            consoleOutput.innerHTML += message + '\n';
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        };
+        
+        // Update status
+        document.getElementById('status').textContent = 'Debug mode active - check console for detailed output';
+    </script>
+</body>
+</html>

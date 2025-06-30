@@ -1,0 +1,57 @@
+WebSocket Events
+Last edited by Travis Tarr Feb 24, 2021
+The API serves an websocket endpoint via socket.io.
+
+Events
+export const SOCKET_EVENTS = {
+  JOIN_ROOM: 'join-room',
+  LEAVE_ROOM: 'leave-room',
+  NEW_SONG: 'new-song',
+  RELOAD_SONG_LIST: 'reload-song-list',
+  UPDATE_SONG: 'update-song',
+  UPDATE_SONGS: 'update-songs',
+  DELETE_SONG: 'delete-song',
+  UPDATE_QUEUE_LIST: 'queue-update',
+  RELOAD_SAVED_QUEUE_LIST: 'reload-saved-queue',
+  QUEUE_MESSAGE: 'queue-event',
+  NEW_PLAYHISTORY: 'new-playhistory',
+  UPDATE_PLAYHISTORY: 'update-playhistory',
+  DELETE_PLAYHISTORY: 'delete-playhistory',
+  UPDATE_STREAMER: 'update-streamer',
+  UPDATE_ATTRIBUTES: 'update-attributes',
+};
+How to Connect
+Using socket.io client
+import io from 'socket.io-client';
+
+const client = io(`https://api.streamersonglist.com`);
+client.on('connect', () => {
+  // streamerId is the numeric `id` from `/streamers/<streamer-name` endpoint
+  // but needs to be cast as a string for the socket event
+  client.emit('join-room', `${streamerId}`);
+  client.on('queue-update', () => {
+    // the queue has been updated, should refetch
+  });
+  client.on('update-playhistory', () => {
+    // the history has been updated, should refetch
+  });
+  client.on('reload-song-list', () => {
+    // refetch the songlist for possible updates
+    // this occurs anytime a song was added to the queue, removed from the queue,
+    // or played and added to history
+  });
+});
+Using ws client
+const WebSocket = require('ws');
+
+const ws = new WebSocket(`wss://api.streamersonglist.com/socket.io/?EIO=3&transport=websocket`, {
+  perMessageDeflate: false
+});
+
+ws.on('open', () => {
+  console.log("opened");
+});
+
+ws.on('message', (data) => {
+  // parse event from data
+});

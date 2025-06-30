@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Queue Minimal Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, height=768">
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        #queue-wrapper {
+            width: 1024px;
+            height: 768px;
+            border: 2px solid #fff;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .debug-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info">
+        <div>Status: <span id="status">Loading...</span></div>
+        <div>Queue Items: <span id="queue-count">0</span></div>
+        <div>Last Update: <span id="last-update">Never</span></div>
+    </div>
+    
+    <div id="queue-wrapper">
+        <div style="text-align: center;">
+            <h2>Queue Loading...</h2>
+            <p>If this message persists, there may be an issue with the connection.</p>
+        </div>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script>
+        // Simplified version of the queue logic for testing
+        const apiUrl = "https://api.streamersonglist.com/v1/";
+        const streamerName = "belleune";
+        const streamerId = 287;
+        const allCaps = true;
+        
+        function updateStatus(message) {
+            $('#status').text(message);
+            $('#last-update').text(new Date().toLocaleTimeString());
+            console.log('Status:', message);
+        }
+        
+        function testBasicFunctionality() {
+            updateStatus('Testing basic functionality...');
+            
+            // Test 1: Check if jQuery is working
+            if (typeof $ === 'undefined') {
+                updateStatus('ERROR: jQuery not loaded');
+                return;
+            }
+            
+            // Test 2: Check if Socket.IO is working
+            if (typeof io === 'undefined') {
+                updateStatus('ERROR: Socket.IO not loaded');
+                return;
+            }
+            
+            updateStatus('Libraries loaded successfully');
+            
+            // Test 3: Try API call
+            testApiCall();
+        }
+        
+        function testApiCall() {
+            updateStatus('Testing API call...');
+            
+            const url = apiUrl + "streamers/" + streamerName + "/queue";
+            
+            $.ajax({
+                url: url,
+                timeout: 10000,
+                success: function(data) {
+                    updateStatus('API call successful');
+                    console.log('API Response:', data);
+                    
+                    if (data && data.list) {
+                        $('#queue-count').text(data.list.length);
+                        renderQueue(data.list);
+                    } else {
+                        updateStatus('API response missing queue data');
+                        renderEmptyQueue();
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    updateStatus(`API call failed: ${textStatus}`);
+                    console.error('API Error:', textStatus, errorThrown);
+                    renderErrorMessage(`API Error: ${textStatus}`);
+                }
+            });
+        }
+        
+        function renderQueue(queueList) {
+            if (queueList.length === 0) {
+                renderEmptyQueue();
+                return;
+            }
+            
+            // Sort by position
+            queueList.sort((a, b) => a.position - b.position);
+            
+            let html = '<div style="text-align: center;">';
+            
+            queueList.slice(0, 5).forEach((song, index) => {
+                const title = song.title || 'Unknown Title';
+                const artist = song.artist || 'Unknown Artist';
+                const requester = getRequesterName(song);
+                
+                html += `
+                    <div style="margin: 20px 0; padding: 20px; border: 1px solid #fff; border-radius: 10px;">
+                        <h3>Position ${index + 1}</h3>
+                        <h2>${allCaps ? title.toUpperCase() : title}</h2>
+                        <h4>by ${allCaps ? artist.toUpperCase() : artist}</h4>
+                        <p>Requested by ${allCaps ? requester.toUpperCase() : requester}</p>
+                    </div>
+                `;
+            });
+            
+            if (queueList.length > 5) {
+                html += `<p>+${queueList.length - 5} more in queue</p>`;
+            }
+            
+            html += '</div>';
+            
+            $('#queue-wrapper').html(html);
+            updateStatus(`Rendered ${queueList.length} queue items`);
+        }
+        
+        function renderEmptyQueue() {
+            const html = `
+                <div style="text-align: center;">
+                    <h2>${allCaps ? 'QUEUE IS EMPTY' : 'Queue is Empty'}</h2>
+                    <p>${allCaps ? 'ADD SONGS TO GET STARTED!' : 'Add songs to get started!'}</p>
+                </div>
+            `;
+            $('#queue-wrapper').html(html);
+            updateStatus('Queue is empty');
+        }
+        
+        function renderErrorMessage(message) {
+            const html = `
+                <div style="text-align: center; color: #ff6b6b;">
+                    <h2>Error</h2>
+                    <p>${message}</p>
+                    <p>Check the console for more details.</p>
+                </div>
+            `;
+            $('#queue-wrapper').html(html);
+        }
+        
+        function getRequesterName(song) {
+            if (song.requests && Array.isArray(song.requests) && song.requests.length > 0) {
+                const req = song.requests[0];
+                if (req.name) return req.name;
+                if (req.username) return req.username;
+                if (req.displayName) return req.displayName;
+                if (typeof req === 'string') return req;
+            }
+            if (song.name) return song.name;
+            if (song.requester) {
+                if (typeof song.requester === 'string') return song.requester;
+                if (song.requester.name) return song.requester.name;
+                if (song.requester.username) return song.requester.username;
+            }
+            if (song.requestedBy) return song.requestedBy;
+            if (song.user) {
+                if (typeof song.user === 'string') return song.user;
+                if (song.user.name) return song.user.name;
+            }
+            return 'Unknown';
+        }
+        
+        // Initialize when document is ready
+        $(document).ready(function() {
+            console.log('Minimal test initialized');
+            testBasicFunctionality();
+        });
+    </script>
+</body>
+</html>

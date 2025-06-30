@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration Test - StreamerSongList</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+        .test-section {
+            background-color: #2a2a2a;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .response {
+            background-color: #000;
+            color: #0f0;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            color: #ff6b6b;
+        }
+        .success {
+            color: #51cf66;
+        }
+        .warning {
+            color: #ffd43b;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Configuration Test - StreamerSongList</h1>
+    
+    <div class="test-section">
+        <h3>Configuration Check:</h3>
+        <div id="config-check">Loading...</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>API Endpoint Tests:</h3>
+        <div id="api-results" class="response">Testing API endpoints...</div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Queue Display Test:</h3>
+        <div id="queue-wrapper"></div>
+        <div id="song-limit-display" style="margin-top: 10px; padding: 10px; background-color: #333; border-radius: 5px;"></div>
+    </div>
+    
+    <script src="lib/streamersonglist.js"></script>
+    
+    <script>
+        function log(message, type = 'info') {
+            const results = document.getElementById('api-results');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : (type === 'success' ? 'success' : (type === 'warning' ? 'warning' : ''));
+            results.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        function testConfiguration() {
+            const configDiv = document.getElementById('config-check');
+            
+            // Test configuration values
+            const config = {
+                'API URL': apiUrl,
+                'Streamer Name': streamerName,
+                'Streamer ID': streamerId,
+                'Show Song Limit': showSongLimit,
+                'All Caps': allCaps,
+                'Max Queue Items': maxQueueItems,
+                'Show More': showMore,
+                'Rotation Speed': rotationSpeed + 'ms'
+            };
+            
+            let configHtml = '<table style="width: 100%; color: #fff;">';
+            for (const [key, value] of Object.entries(config)) {
+                configHtml += `<tr><td style="padding: 5px; border-bottom: 1px solid #555;"><strong>${key}:</strong></td><td style="padding: 5px; border-bottom: 1px solid #555;">${value}</td></tr>`;
+            }
+            configHtml += '</table>';
+            
+            configDiv.innerHTML = configHtml;
+        }
+        
+        function testEndpoints() {
+            log('Starting endpoint tests...');
+            
+            // Test queue endpoint
+            const queueUrl = `${apiUrl}streamers/${streamerId}/queue`;
+            log(`Testing queue endpoint: ${queueUrl}`);
+            
+            $.ajax({
+                url: queueUrl,
+                method: 'GET',
+                timeout: 10000,
+                success: function(data) {
+                    log('✓ Queue endpoint working', 'success');
+                    log(`Queue contains ${data.list ? data.list.length : 0} songs`);
+                },
+                error: function(xhr, status, error) {
+                    log(`✗ Queue endpoint failed: ${status} - ${error}`, 'error');
+                }
+            });
+            
+            // Test streamer info endpoint (fixed version)
+            const streamerUrl = `${apiUrl}streamers/${streamerId}`;
+            log(`Testing streamer info endpoint: ${streamerUrl}`);
+            
+            $.ajax({
+                url: streamerUrl,
+                method: 'GET',
+                timeout: 10000,
+                success: function(data) {
+                    log('✓ Streamer info endpoint working', 'success');
+                    log(`Streamer data: ${JSON.stringify(data, null, 2)}`);
+                    
+                    if (data.songLimit !== undefined) {
+                        log(`Song limit configured: ${data.songLimit}`, 'success');
+                    } else {
+                        log('No song limit found in response', 'warning');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    log(`✗ Streamer info endpoint failed: ${status} - ${error}`, 'error');
+                }
+            });
+            
+            // Test the old (incorrect) endpoint for comparison
+            const oldStreamerUrl = `${apiUrl}streamers/${streamerName}`;
+            log(`Testing old (incorrect) streamer endpoint: ${oldStreamerUrl}`);
+            
+            $.ajax({
+                url: oldStreamerUrl,
+                method: 'GET',
+                timeout: 10000,
+                success: function(data) {
+                    log('⚠ Old endpoint still works (unexpected)', 'warning');
+                },
+                error: function(xhr, status, error) {
+                    log(`✓ Old endpoint correctly fails: ${status}`, 'success');
+                }
+            });
+        }
+        
+        $(document).ready(function() {
+            testConfiguration();
+            setTimeout(testEndpoints, 1000);
+        });
+    </script>
+</body>
+</html>
