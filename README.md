@@ -42,12 +42,26 @@ The overlay now includes a comprehensive profile system that allows you to custo
 ### Quick Profile Setup
 
 1. **Open Profile Selector**: Open `profile-selector.html` in your browser
-2. **Choose a Style**: Select from 5 pre-built profiles:
+2. **Choose a Style**: Select from 14 pre-built profiles:
+
+   **Core Profiles:**
    - **Superhero** (Default): Comic book style with vibrant effects
    - **Minimal**: Clean and simple design
    - **Neon**: Cyberpunk-inspired with glowing effects  
    - **Retro**: 80s-inspired with classic styling
    - **Elegant**: Sophisticated with refined typography
+
+   **Content-Specific Profiles:**
+   - **Gaming**: High-energy design for competitive gaming
+   - **Music**: Smooth rhythmic design for DJ and music streams
+   - **Just Chatting**: Comfortable design for talk shows
+   - **Horror**: Dark atmospheric design for scary content
+
+   **Aesthetic Profiles:**
+   - **Kawaii**: Cute pastel design for anime content
+   - **Synthwave**: 80s retro-futuristic neon aesthetic
+   - **Nature**: Earthy organic design for outdoor content
+   - **Corporate**: Professional clean design for business streams
 3. **Apply**: Click "Apply Selected Profile" to activate
 4. **Preview**: Use "Preview Overlay" to see the result
 
@@ -59,6 +73,15 @@ The overlay now includes a comprehensive profile system that allows you to custo
 - **Layout Options**: Borders, shadows, spacing configurations
 - **Background Styles**: Gradients, patterns, and animations
 
+### How to Switch Profiles
+
+**Visual Selector**: Open `profile-selector.html` for full interface with previews
+**Quick Switcher**: Open `profile-switcher.html` for one-click switching  
+**Keyboard Shortcuts**: Press `Ctrl+P` in overlay, or `1-9` for quick switching
+**Testing**: Use `profile-tester.html` for real-time testing and experimentation
+
+Profiles automatically save and persist across browser sessions.
+
 ### Creating Custom Profiles
 
 For advanced customization, edit `profile-config.js` to create your own profiles or modify existing ones. See `PROFILE_GUIDE.md` for detailed instructions.
@@ -66,6 +89,28 @@ For advanced customization, edit `profile-config.js` to create your own profiles
 ### Keyboard Shortcuts
 
 - **Ctrl+P**: Open profile selector (when overlay is focused)
+- **1-9**: Quick switch to profiles 1-9
+- **R**: Random profile
+- **Esc**: Reset to default
+
+### Profile Showcase
+
+Want to see all profiles in action? Check out the [Profile Showcase](profile-showcase.html) to explore all 14 available profiles with detailed descriptions and use cases.
+
+## Fixed Issues
+
+- Fixed missing `addDivToQueueWrapper` function error
+- Fixed incorrect sort function that was returning boolean instead of number
+- Fixed memory leak from multiple `setInterval` timers
+- Implemented proper queue rotation with interval management
+- Added comprehensive WebSocket event handling
+- Unified CSS styling with consistent 4:3 aspect ratio
+- Added notification system for real-time feedback
+- Implemented `maxQueueItems` and `showMore` functionality
+- Added song limit display functionality
+- **Fixed "0 requests remaining" showing when no limit is set**
+- **Fixed "Unknown" requester names by improving data parsing**
+- **Added comprehensive profile switching methods**
 
 ## Superhero Features
 
@@ -101,18 +146,6 @@ For advanced customization, edit `profile-config.js` to create your own profiles
 - **Queue Information**: Shows current queue count and connection status
 - **Responsive Design**: Adapts to different screen sizes while maintaining aspect ratio
 - **Song Limit Display**: Shows remaining or maximum song requests (configurable)
-
-## Fixed Issues
-
-- Fixed missing `addDivToQueueWrapper` function error
-- Fixed incorrect sort function that was returning boolean instead of number
-- Fixed memory leak from multiple `setInterval` timers
-- Implemented proper queue rotation with interval management
-- Added comprehensive WebSocket event handling
-- Unified CSS styling with consistent 4:3 aspect ratio
-- Added notification system for real-time feedback
-- Implemented `maxQueueItems` and `showMore` functionality
-- Added song limit display functionality
 
 ## Settings
 

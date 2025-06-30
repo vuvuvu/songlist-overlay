@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Debug Overlay</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, height=768">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: white;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .debug-panel {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #4CAF50;
+            padding: 15px;
+            border-radius: 10px;
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .debug-section {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+        }
+        
+        .debug-title {
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .success {
+            color: #4CAF50;
+        }
+        
+        .error {
+            color: #f44336;
+        }
+        
+        .info {
+            color: #2196F3;
+        }
+        
+        .overlay-preview {
+            margin-top: 320px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .song-display {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .refresh-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .refresh-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <button class="refresh-btn" onclick="runDiagnostics()">🔄 Refresh Test</button>
+    
+    <div class="debug-panel" id="debugPanel">
+        <div class="debug-title">🔍 StreamerSongList Debug Panel</div>
+        <div id="debugOutput">Loading diagnostics...</div>
+    </div>
+    
+    <div class="overlay-preview">
+        <div class="debug-title">Overlay Preview:</div>
+        <div id="overlayPreview">No data loaded yet...</div>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.socket.io/2.5.0/socket.io.js"></script>
+    
+    <script>
+        // Configuration
+        const apiUrl = "https://api.streamersonglist.com/v1/";
+        const streamerName = "belleune";
+        const streamerId = 287;
+        
+        let debugOutput = document.getElementById('debugOutput');
+        let overlayPreview = document.getElementById('overlayPreview');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            debugOutput.innerHTML += `<div class="${type}">[${timestamp}] ${message}</div>`;
+            console.log(message);
+        }
+        
+        function clearLog() {
+            debugOutput.innerHTML = '';
+        }
+        
+        // Enhanced requester detection function (EXACT COPY from streamersonglist.js)
+        function getRequesterName(song) {
+            let requestedBy = 'Unknown';
+            
+            log(`🔍 Detecting requester for song: ${song.title}`, 'info');
+            log(`📋 Requests array: ${JSON.stringify(song.requests)}`, 'info');
+            
+            // Method 1: Check requests array with name field (CORRECT LOCATION)
+            if (song.requests && Array.isArray(song.requests) && song.requests.length > 0) {
+                const req = song.requests[0];
+                log(`✅ Found requests array, first item: ${JSON.stringify(req)}`, 'success');
+                
+                if (req.name) {
+                    requestedBy = req.name;
+                    log(`🎯 Found requester name: ${requestedBy}`, 'success');
+                } else if (req.username) {
+                    requestedBy = req.username;
+                    log(`🎯 Found requester username: ${requestedBy}`, 'success');
+                } else if (req.displayName) {
+                    requestedBy = req.displayName;
+                    log(`🎯 Found requester displayName: ${requestedBy}`, 'success');
+                } else if (typeof req === 'string') {
+                    requestedBy = req;
+                    log(`🎯 Found requester as string: ${requestedBy}`, 'success');
+                } else {
+                    log(`❌ No name field in request object`, 'error');
+                }
+            } else {
+                log(`❌ No requests array found`, 'error');
+            }
+            
+            // Clean up the name
+            if (requestedBy && typeof requestedBy === 'string') {
+                requestedBy = requestedBy.trim();
+                if (requestedBy === '') {
+                    requestedBy = 'Unknown';
+                }
+            }
+            
+            log(`📤 Final requester result: ${requestedBy}`, requestedBy !== 'Unknown' ? 'success' : 'error');
+            return requestedBy;
+        }
+        
+        function testSocketConnection() {
+            log('🔌 Testing Socket.IO connection...', 'info');
+            
+            try {
+                const socket = io("https://api.streamersonglist.com", {
+                    transports: ['websocket', 'polling']
+                });
+                
+                socket.on("connect", () => {
+                    log('✅ Socket.IO connected successfully!', 'success');
+                    socket.emit("join-room", `${streamerId}`);
+                    log(`🏠 Joined room: ${streamerId}`, 'success');
+                });
+                
+                socket.on("connect_error", (error) => {
+                    log(`❌ Socket.IO connection error: ${error.message}`, 'error');
+                });
+                
+                socket.on("disconnect", (reason) => {
+                    log(`🔌 Socket.IO disconnected: ${reason}`, 'info');
+                });
+                
+            } catch (error) {
+                log(`❌ Socket.IO setup error: ${error.message}`, 'error');
+            }
+        }
+        
+        function runDiagnostics() {
+            clearLog();
+            log('🚀 Starting comprehensive diagnostics...', 'info');
+            log(`📋 Streamer: ${streamerName} (ID: ${streamerId})`, 'info');
+            
+            // Test API connection
+            log('📡 Testing API connection...', 'info');
+            
+            const url = apiUrl + "streamers/" + streamerName + "/queue";
+            
+            $.ajax({
+                url: url,
+                method: 'GET',
+                timeout: 10000,
+                success: function(data) {
+                    log('✅ API connection successful!', 'success');
+                    log(`📊 Queue has ${data.list ? data.list.length : 0} songs`, 'info');
+                    
+                    if (data.list && data.list.length > 0) {
+                        log('📝 Testing requester detection on actual data...', 'info');
+                        
+                        data.list.forEach((song, index) => {
+                            log(`\n--- Song ${index + 1}: ${song.title} ---`, 'info');
+                            const detectedRequester = getRequesterName(song);
+                            
+                            // Show in overlay preview
+                            overlayPreview.innerHTML += `
+                                <div class="song-display">
+                                    <strong>Song:</strong> ${song.title}<br>
+                                    <strong>Artist:</strong> ${song.artist}<br>
+                                    <strong>Detected Requester:</strong> <span class="${detectedRequester !== 'Unknown' ? 'success' : 'error'}">${detectedRequester}</span>
+                                </div>
+                            `;
+                        });
+                        
+                        log('\n🧪 Testing complete! Check overlay preview below.', 'success');
+                    } else {
+                        log('⚠️ No songs in queue to test with', 'error');
+                        overlayPreview.innerHTML = '<div class="error">No songs in queue to test requester detection</div>';
+                    }
+                    
+                    // Test Socket.IO
+                    testSocketConnection();
+                },
+                error: function(xhr, status, error) {
+                    log(`❌ API connection failed: ${error}`, 'error');
+                    log(`   Status: ${xhr.status}`, 'error');
+                    log(`   Response: ${xhr.responseText}`, 'error');
+                    overlayPreview.innerHTML = '<div class="error">API connection failed - check streamer name and network</div>';
+                }
+            });
+        }
+        
+        // Auto-run diagnostics on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runDiagnostics, 1000);
+        });
+    </script>
+</body>
+</html>

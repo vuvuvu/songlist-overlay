@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>API Debug - Simple Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, height=768">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: white;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 400px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #4CAF50;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 12px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 9999;
+        }
+        
+        .debug-title {
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .log-entry {
+            margin: 3px 0;
+            padding: 2px 0;
+        }
+        
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+        .warning { color: #ff9800; }
+        
+        .overlay-area {
+            margin-right: 420px;
+            padding: 20px;
+        }
+        
+        .test-display {
+            background: #333;
+            border: 2px solid #666;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .refresh-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: bold;
+        }
+        
+        .refresh-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-panel">
+        <div class="debug-title">🔍 API Debug Panel</div>
+        <button class="refresh-btn" onclick="testAPI()">🔄 Test API</button>
+        <button class="refresh-btn" onclick="clearLog()">🗑️ Clear Log</button>
+        <div id="debugLog">Starting API test...</div>
+    </div>
+    
+    <div class="overlay-area">
+        <h1 style="color: #4CAF50;">API Data Test</h1>
+        
+        <div class="test-display" id="apiStatus">
+            <h2>API Connection Status</h2>
+            <div id="connectionResult">Not tested yet</div>
+        </div>
+        
+        <div class="test-display" id="queueData">
+            <h2>Queue Data</h2>
+            <div id="queueResult">No data loaded</div>
+        </div>
+        
+        <div class="test-display" id="requesterTest">
+            <h2>Requester Detection Test</h2>
+            <div id="requesterResult">No songs tested</div>
+        </div>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    
+    <script>
+        const apiUrl = "https://api.streamersonglist.com/v1/";
+        const streamerName = "belleune";
+        const streamerId = 287;
+        
+        let debugLog = document.getElementById('debugLog');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.innerHTML += `<div class="log-entry ${type}">[${timestamp}] ${message}</div>`;
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function clearLog() {
+            debugLog.innerHTML = 'Log cleared...';
+        }
+        
+        function updateStatus(elementId, content, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = content;
+            element.style.color = isSuccess ? '#4CAF50' : '#f44336';
+        }
+        
+        // Enhanced requester detection function (exact copy from streamersonglist.js)
+        function getRequesterName(song) {
+            let requestedBy = 'Unknown';
+            
+            log(`🔍 Testing song: ${song.title}`, 'info');
+            log(`📋 Full song object: ${JSON.stringify(song, null, 2)}`, 'info');
+            
+            // Method 1: Check requests array with name field
+            if (song.requests && Array.isArray(song.requests) && song.requests.length > 0) {
+                const req = song.requests[0];
+                log(`✅ Found requests array, first item: ${JSON.stringify(req, null, 2)}`, 'success');
+                
+                if (req.name) {
+                    requestedBy = req.name;
+                    log(`🎯 SUCCESS: Found requester name: "${requestedBy}"`, 'success');
+                } else if (req.username) {
+                    requestedBy = req.username;
+                    log(`🎯 Found requester username: "${requestedBy}"`, 'success');
+                } else if (req.displayName) {
+                    requestedBy = req.displayName;
+                    log(`🎯 Found requester displayName: "${requestedBy}"`, 'success');
+                } else {
+                    log(`❌ No name/username/displayName in request object`, 'error');
+                }
+            } else {
+                log(`❌ No requests array found in song`, 'error');
+            }
+            
+            // Clean up the name
+            if (requestedBy && typeof requestedBy === 'string') {
+                requestedBy = requestedBy.trim();
+                if (requestedBy === '') {
+                    requestedBy = 'Unknown';
+                }
+            }
+            
+            log(`📤 Final result: "${requestedBy}"`, requestedBy !== 'Unknown' ? 'success' : 'error');
+            return requestedBy;
+        }
+        
+        function testAPI() {
+            clearLog();
+            log('🚀 Starting comprehensive API test...', 'info');
+            log(`📋 Configuration: Streamer="${streamerName}", ID=${streamerId}`, 'info');
+            
+            updateStatus('connectionResult', 'Testing...', true);
+            updateStatus('queueResult', 'Waiting for API...', true);
+            updateStatus('requesterResult', 'Waiting for data...', true);
+            
+            const url = apiUrl + "streamers/" + streamerName + "/queue";
+            log(`🌐 API URL: ${url}`, 'info');
+            
+            $.ajax({
+                url: url,
+                method: 'GET',
+                timeout: 15000,
+                beforeSend: function() {
+                    log('📡 Sending API request...', 'info');
+                },
+                success: function(data) {
+                    log('✅ API request successful!', 'success');
+                    log(`📊 Response received: ${JSON.stringify(data, null, 2)}`, 'info');
+                    
+                    updateStatus('connectionResult', '✅ API Connected Successfully', true);
+                    
+                    // Test queue data
+                    if (data.list && Array.isArray(data.list)) {
+                        log(`📝 Queue contains ${data.list.length} songs`, 'success');
+                        updateStatus('queueResult', `✅ Found ${data.list.length} songs in queue`, true);
+                        
+                        if (data.list.length > 0) {
+                            log('--- Testing Requester Detection ---', 'info');
+                            
+                            let requesterResults = '<h3>Requester Detection Results:</h3>';
+                            let successCount = 0;
+                            
+                            data.list.forEach((song, index) => {
+                                log(`\n--- Song ${index + 1}: "${song.title}" by ${song.artist} ---`, 'info');
+                                const detectedRequester = getRequesterName(song);
+                                
+                                if (detectedRequester !== 'Unknown') {
+                                    successCount++;
+                                    requesterResults += `<div style="color: #4CAF50;">✅ Song ${index + 1}: "${song.title}" → "${detectedRequester}"</div>`;
+                                } else {
+                                    requesterResults += `<div style="color: #f44336;">❌ Song ${index + 1}: "${song.title}" → "Unknown"</div>`;
+                                }
+                            });
+                            
+                            requesterResults += `<br><strong>Success Rate: ${successCount}/${data.list.length} songs</strong>`;
+                            updateStatus('requesterResult', requesterResults, successCount > 0);
+                            
+                            log(`📊 Requester detection summary: ${successCount}/${data.list.length} successful`, successCount > 0 ? 'success' : 'error');
+                            
+                        } else {
+                            log('⚠️ Queue is empty - no songs to test requester detection', 'warning');
+                            updateStatus('requesterResult', '⚠️ Queue is empty - add songs to test requester detection', false);
+                        }
+                        
+                    } else {
+                        log('❌ Invalid queue data structure', 'error');
+                        log(`Received data: ${JSON.stringify(data)}`, 'error');
+                        updateStatus('queueResult', '❌ Invalid queue data structure', false);
+                    }
+                    
+                    log('🎉 API test completed!', 'success');
+                },
+                error: function(xhr, status, error) {
+                    log(`❌ API request failed!`, 'error');
+                    log(`Status: ${xhr.status}`, 'error');
+                    log(`Error: ${error}`, 'error');
+                    log(`Response Text: ${xhr.responseText}`, 'error');
+                    
+                    updateStatus('connectionResult', `❌ API Failed: ${error}`, false);
+                    updateStatus('queueResult', '❌ Could not fetch queue data', false);
+                    updateStatus('requesterResult', '❌ No data to test', false);
+                    
+                    // Provide troubleshooting info
+                    if (xhr.status === 0) {
+                        log('💡 Status 0 usually means CORS or network issue', 'warning');
+                    } else if (xhr.status === 404) {
+                        log('💡 Status 404 means streamer name might be wrong', 'warning');
+                    }
+                }
+            });
+        }
+        
+        // Auto-start test
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testAPI, 1000);
+        });
+    </script>
+</body>
+</html>

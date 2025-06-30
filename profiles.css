@@ -97,6 +97,59 @@ body.profile-minimal #queue-wrapper {
     background: rgba(0, 0, 0, 0.8);
 }
 
+body.profile-gaming #queue-wrapper {
+    background: 
+        radial-gradient(circle at 25% 25%, rgba(0, 255, 65, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(255, 0, 128, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 10%, rgba(0, 191, 255, 0.1) 0%, transparent 50%),
+        rgba(0, 0, 0, 0.85);
+}
+
+body.profile-music #queue-wrapper {
+    background: 
+        radial-gradient(ellipse at 30% 30%, rgba(147, 112, 219, 0.2) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 70%, rgba(255, 105, 180, 0.15) 0%, transparent 60%),
+        rgba(25, 25, 112, 0.8);
+}
+
+body.profile-chatting #queue-wrapper {
+    background: rgba(236, 240, 241, 0.95);
+}
+
+body.profile-horror #queue-wrapper {
+    background: 
+        radial-gradient(circle at 20% 80%, rgba(255, 0, 0, 0.2) 0%, transparent 40%),
+        radial-gradient(circle at 80% 20%, rgba(139, 0, 0, 0.15) 0%, transparent 40%),
+        rgba(0, 0, 0, 0.95);
+}
+
+body.profile-kawaii #queue-wrapper {
+    background: 
+        radial-gradient(circle at 30% 20%, rgba(255, 105, 180, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(255, 182, 193, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 20% 60%, rgba(255, 20, 147, 0.1) 0%, transparent 50%),
+        rgba(255, 240, 245, 0.9);
+}
+
+body.profile-corporate #queue-wrapper {
+    background: rgba(255, 255, 255, 0.95);
+}
+
+body.profile-synthwave #queue-wrapper {
+    background: 
+        linear-gradient(45deg, rgba(255, 0, 255, 0.1) 0%, transparent 50%),
+        linear-gradient(-45deg, rgba(0, 255, 255, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at center, rgba(255, 255, 0, 0.05) 0%, transparent 70%),
+        rgba(16, 0, 32, 0.9);
+}
+
+body.profile-nature #queue-wrapper {
+    background: 
+        radial-gradient(ellipse at 40% 60%, rgba(46, 139, 87, 0.15) 0%, transparent 70%),
+        radial-gradient(ellipse at 60% 40%, rgba(34, 139, 34, 0.1) 0%, transparent 70%),
+        rgba(245, 245, 220, 0.9);
+}
+
 /* Background patterns (conditional) */
 #queue-wrapper::before {
     content: '';
@@ -132,6 +185,79 @@ body.profile-neon #queue-wrapper::before {
             rgba(0, 255, 255, 0.05) 2px
         );
     animation: neonScan 15s linear infinite;
+    animation-play-state: calc(var(--bg-animation-enabled) * 1) ? running : paused;
+}
+
+body.profile-gaming #queue-wrapper::before {
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 3px,
+            rgba(0, 255, 65, 0.03) 3px,
+            rgba(0, 255, 65, 0.03) 6px
+        ),
+        repeating-linear-gradient(
+            -45deg,
+            transparent,
+            transparent 3px,
+            rgba(255, 0, 128, 0.03) 3px,
+            rgba(255, 0, 128, 0.03) 6px
+        );
+    animation: gamingPulse 10s ease-in-out infinite;
+    animation-play-state: calc(var(--bg-animation-enabled) * 1) ? running : paused;
+}
+
+body.profile-horror #queue-wrapper::before {
+    background: 
+        repeating-radial-gradient(
+            circle at 50% 50%,
+            transparent,
+            transparent 10px,
+            rgba(255, 0, 0, 0.02) 10px,
+            rgba(255, 0, 0, 0.02) 20px
+        );
+    animation: horrorFlicker 8s ease-in-out infinite;
+    animation-play-state: calc(var(--bg-animation-enabled) * 1) ? running : paused;
+}
+
+body.profile-kawaii #queue-wrapper::before {
+    background: 
+        repeating-linear-gradient(
+            30deg,
+            transparent,
+            transparent 5px,
+            rgba(255, 105, 180, 0.02) 5px,
+            rgba(255, 105, 180, 0.02) 10px
+        ),
+        repeating-linear-gradient(
+            -30deg,
+            transparent,
+            transparent 5px,
+            rgba(255, 182, 193, 0.02) 5px,
+            rgba(255, 182, 193, 0.02) 10px
+        );
+    animation: kawaiiFloat 12s ease-in-out infinite;
+    animation-play-state: calc(var(--bg-animation-enabled) * 1) ? running : paused;
+}
+
+body.profile-synthwave #queue-wrapper::before {
+    background: 
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 0, 255, 0.05) 2px,
+            rgba(255, 0, 255, 0.05) 4px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 20px,
+            rgba(0, 255, 255, 0.03) 20px,
+            rgba(0, 255, 255, 0.03) 22px
+        );
+    animation: synthwaveGrid 20s linear infinite;
     animation-play-state: calc(var(--bg-animation-enabled) * 1) ? running : paused;
 }
 
@@ -454,6 +580,128 @@ body.profile-elegant .song-requester {
     text-transform: none;
 }
 
+/* Gaming profile - high energy effects */
+body.profile-gaming .song-position,
+body.profile-gaming .song-title,
+body.profile-gaming .song-artist,
+body.profile-gaming .song-requester {
+    text-shadow: 
+        0 0 5px currentColor,
+        0 0 10px currentColor,
+        2px 2px 0px rgba(0, 0, 0, 0.8);
+}
+
+/* Music profile - smooth styling */
+body.profile-music .song-title {
+    text-transform: none;
+}
+
+body.profile-music .song-artist,
+body.profile-music .song-requester {
+    text-transform: none;
+    font-style: italic;
+}
+
+/* Just Chatting profile - readable and comfortable */
+body.profile-chatting .song-position,
+body.profile-chatting .song-title,
+body.profile-chatting .song-artist,
+body.profile-chatting .song-requester {
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+body.profile-chatting .song-title,
+body.profile-chatting .song-artist,
+body.profile-chatting .song-requester {
+    text-transform: none;
+}
+
+/* Horror profile - spooky effects */
+body.profile-horror .song-position,
+body.profile-horror .song-title,
+body.profile-horror .song-artist,
+body.profile-horror .song-requester {
+    text-shadow: 
+        0 0 10px currentColor,
+        0 0 20px currentColor,
+        0 0 30px currentColor,
+        2px 2px 0px rgba(0, 0, 0, 0.9);
+    animation-duration: 3s;
+}
+
+body.profile-horror .song-title {
+    animation: horrorGlow 4s ease-in-out infinite;
+}
+
+/* Kawaii profile - cute styling */
+body.profile-kawaii .song-position,
+body.profile-kawaii .song-title,
+body.profile-kawaii .song-artist,
+body.profile-kawaii .song-requester {
+    text-shadow: 
+        2px 2px 0px rgba(255, 255, 255, 0.8),
+        0 0 10px currentColor;
+}
+
+body.profile-kawaii .song-title,
+body.profile-kawaii .song-artist,
+body.profile-kawaii .song-requester {
+    text-transform: none;
+}
+
+/* Corporate profile - professional styling */
+body.profile-corporate .song-position,
+body.profile-corporate .song-title,
+body.profile-corporate .song-artist,
+body.profile-corporate .song-requester {
+    text-shadow: none;
+    animation: none;
+}
+
+body.profile-corporate .song-title,
+body.profile-corporate .song-artist,
+body.profile-corporate .song-requester {
+    text-transform: none;
+}
+
+body.profile-corporate #queue-info,
+body.profile-corporate .more-indicator,
+body.profile-corporate .song-limit {
+    background: rgba(52, 73, 94, 0.9);
+    border: 1px solid #34495E;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    animation: none;
+}
+
+/* Synthwave profile - retro-futuristic effects */
+body.profile-synthwave .song-position,
+body.profile-synthwave .song-title,
+body.profile-synthwave .song-artist,
+body.profile-synthwave .song-requester {
+    text-shadow: 
+        0 0 5px currentColor,
+        0 0 10px currentColor,
+        0 0 15px currentColor,
+        0 0 20px currentColor,
+        2px 2px 0px rgba(0, 0, 0, 0.8);
+}
+
+/* Nature profile - organic styling */
+body.profile-nature .song-title,
+body.profile-nature .song-artist,
+body.profile-nature .song-requester {
+    text-transform: none;
+}
+
+body.profile-nature .song-position,
+body.profile-nature .song-title,
+body.profile-nature .song-artist,
+body.profile-nature .song-requester {
+    text-shadow: 
+        1px 1px 2px rgba(0, 0, 0, 0.3),
+        0 0 5px rgba(255, 255, 255, 0.2);
+}
+
 /* Animation keyframes */
 @keyframes backgroundShift {
     0% { transform: translate(0, 0) rotate(0deg); }
@@ -463,6 +711,48 @@ body.profile-elegant .song-requester {
 @keyframes neonScan {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(100%); }
+}
+
+@keyframes gamingPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+@keyframes horrorFlicker {
+    0%, 90%, 100% { opacity: 1; }
+    5%, 15%, 25%, 35%, 45%, 55%, 65%, 75%, 85% { opacity: 0.8; }
+    10%, 20%, 30%, 40%, 50%, 60%, 70%, 80% { opacity: 0.3; }
+}
+
+@keyframes kawaiiFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    25% { transform: translateY(-5px) rotate(1deg); }
+    50% { transform: translateY(-3px) rotate(0deg); }
+    75% { transform: translateY(-7px) rotate(-1deg); }
+}
+
+@keyframes synthwaveGrid {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(22px); }
+}
+
+@keyframes horrorGlow {
+    0%, 100% {
+        filter: brightness(1) drop-shadow(0 0 10px currentColor);
+        color: #FF0000;
+    }
+    25% {
+        filter: brightness(1.3) drop-shadow(0 0 20px currentColor);
+        color: #8B0000;
+    }
+    50% {
+        filter: brightness(0.8) drop-shadow(0 0 5px currentColor);
+        color: #DC143C;
+    }
+    75% {
+        filter: brightness(1.5) drop-shadow(0 0 30px currentColor);
+        color: #FF4500;
+    }
 }
 
 @keyframes flipEnter {

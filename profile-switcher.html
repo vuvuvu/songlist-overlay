@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Quick Profile Switcher</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .switcher-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .current-profile {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .current-profile h2 {
+            color: #FFD700;
+            margin-bottom: 10px;
+        }
+        
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-btn {
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .profile-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .profile-btn.active {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.3);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+        
+        .instructions {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+        
+        .instructions ul {
+            text-align: left;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .status {
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(76, 175, 80, 0.3);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .status.error {
+            background: rgba(244, 67, 54, 0.3);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 12px 24px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .action-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+        
+        .keyboard-shortcuts {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        
+        .shortcut {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 3px 8px;
+            border-radius: 5px;
+            margin: 2px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="switcher-container">
+        <h1>🎨 Profile Switcher</h1>
+        
+        <div class="current-profile">
+            <h2>Current Profile</h2>
+            <div id="currentProfileName">Loading...</div>
+            <div id="currentProfileDesc" style="opacity: 0.8; margin-top: 5px;">Loading...</div>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 How to Switch Profiles</h3>
+            <ul>
+                <li><strong>Method 1:</strong> Click any profile button below</li>
+                <li><strong>Method 2:</strong> Press <span class="shortcut">Ctrl+P</span> in your overlay to open the full selector</li>
+                <li><strong>Method 3:</strong> Use keyboard shortcuts <span class="shortcut">1-9</span> for quick switching</li>
+                <li><strong>Method 4:</strong> Open <code>profile-selector.html</code> for advanced options</li>
+            </ul>
+        </div>
+        
+        <div class="profile-grid" id="profileGrid">
+            <!-- Profiles will be loaded here -->
+        </div>
+        
+        <div id="statusMessage" class="status" style="display: none;"></div>
+        
+        <div class="quick-actions">
+            <a href="queue.html" class="action-btn" target="_blank">👁️ View Overlay</a>
+            <a href="profile-selector.html" class="action-btn" target="_blank">🎨 Full Selector</a>
+            <a href="profile-tester.html" class="action-btn" target="_blank">🧪 Test Profiles</a>
+        </div>
+        
+        <div class="keyboard-shortcuts">
+            <strong>Keyboard Shortcuts:</strong>
+            <span class="shortcut">Ctrl+P</span> Open Selector
+            <span class="shortcut">1-9</span> Quick Switch
+            <span class="shortcut">R</span> Random Profile
+            <span class="shortcut">Esc</span> Reset to Default
+        </div>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="profiles.js"></script>
+    <script src="profile-config.js"></script>
+    
+    <script>
+        let currentProfile = 'superhero';
+        
+        function loadProfiles() {
+            if (typeof getAllProfiles === 'undefined') {
+                showStatus('Error: Profile system not loaded', 'error');
+                return;
+            }
+            
+            const profiles = getAllProfiles();
+            const grid = document.getElementById('profileGrid');
+            
+            grid.innerHTML = '';
+            
+            Object.keys(profiles).forEach(profileName => {
+                const profile = profiles[profileName];
+                const button = document.createElement('button');
+                button.className = 'profile-btn';
+                button.textContent = profile.name;
+                button.onclick = () => switchProfile(profileName);
+                
+                if (profileName === currentProfile) {
+                    button.classList.add('active');
+                }
+                
+                grid.appendChild(button);
+            });
+        }
+        
+        function switchProfile(profileName) {
+            if (typeof applyProfile === 'undefined') {
+                showStatus('Error: Profile system not available', 'error');
+                return;
+            }
+            
+            try {
+                applyProfile(profileName);
+                currentProfile = profileName;
+                
+                // Save to localStorage
+                localStorage.setItem('selectedProfile', profileName);
+                
+                // Update UI
+                updateCurrentProfileDisplay();
+                updateActiveButton();
+                
+                showStatus(`✅ Switched to ${getAllProfiles()[profileName].name} profile`, 'success');
+                
+            } catch (error) {
+                showStatus(`❌ Error switching profile: ${error.message}`, 'error');
+            }
+        }
+        
+        function updateCurrentProfileDisplay() {
+            if (typeof getCurrentProfile === 'undefined') return;
+            
+            const profile = getCurrentProfile();
+            document.getElementById('currentProfileName').textContent = profile.name;
+            document.getElementById('currentProfileDesc').textContent = profile.description;
+        }
+        
+        function updateActiveButton() {
+            document.querySelectorAll('.profile-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            const activeBtn = Array.from(document.querySelectorAll('.profile-btn'))
+                .find(btn => btn.textContent === getAllProfiles()[currentProfile].name);
+            if (activeBtn) {
+                activeBtn.classList.add('active');
+            }
+        }
+        
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('statusMessage');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+            
+            setTimeout(() => {
+                statusEl.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key >= '1' && e.key <= '9') {
+                const profileNames = Object.keys(getAllProfiles());
+                const index = parseInt(e.key) - 1;
+                if (profileNames[index]) {
+                    switchProfile(profileNames[index]);
+                }
+            } else if (e.key === 'r' || e.key === 'R') {
+                const profileNames = Object.keys(getAllProfiles());
+                const randomProfile = profileNames[Math.floor(Math.random() * profileNames.length)];
+                switchProfile(randomProfile);
+            } else if (e.key === 'Escape') {
+                switchProfile('superhero');
+            }
+        });
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved profile
+            const savedProfile = localStorage.getItem('selectedProfile');
+            if (savedProfile && getAllProfiles && getAllProfiles()[savedProfile]) {
+                currentProfile = savedProfile;
+            }
+            
+            setTimeout(() => {
+                if (typeof getAllProfiles !== 'undefined') {
+                    loadProfiles();
+                    updateCurrentProfileDisplay();
+                    showStatus('Profile switcher ready!', 'success');
+                } else {
+                    showStatus('Profile system not detected', 'error');
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

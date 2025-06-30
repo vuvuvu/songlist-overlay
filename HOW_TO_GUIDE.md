@@ -66,7 +66,7 @@ Create `queue.html`:
     <meta name="viewport" content="width=1024, height=768">
     <link rel="stylesheet" href="queue.css"/>
     <script src="lib/jquery-3.2.1.min.js"></script>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.socket.io/2.5.0/socket.io.min.js"></script>
     <script src="lib/streamersonglist.js"></script>
 </head>
 <body>

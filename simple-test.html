@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Simple Requester Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, height=768">
+    <link rel="stylesheet" href="queue.css"/>
+    <link rel="stylesheet" href="profiles.css"/>
+    <style>
+        .debug-overlay {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            max-width: 400px;
+            z-index: 9999;
+            border: 2px solid #4CAF50;
+        }
+        
+        .debug-title {
+            color: #FFD700;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .debug-line {
+            margin: 5px 0;
+            padding: 3px 0;
+        }
+        
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+        
+        .refresh-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="queue-wrapper">
+        <div class="song-container static">
+            <div class="song-position">LOADING...</div>
+            <div class="song-title">FETCHING QUEUE DATA</div>
+            <div class="song-artist">PLEASE WAIT</div>
+            <div class="song-requester">CONNECTING TO API</div>
+        </div>
+    </div>
+    
+    <div class="debug-overlay">
+        <div class="debug-title">🔍 Simple Requester Test</div>
+        <div id="debugLog">Starting test...</div>
+        <button class="refresh-btn" onclick="testRequesterDetection()">🔄 Refresh Test</button>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="profiles.js"></script>
+    
+    <script>
+        const apiUrl = "https://api.streamersonglist.com/v1/";
+        const streamerName = "belleune";
+        const allCaps = true;
+        
+        let debugLog = document.getElementById('debugLog');
+        
+        function log(message, type = 'info') {
+            debugLog.innerHTML += `<div class="debug-line ${type}">${message}</div>`;
+            console.log(message);
+            debugLog.scrollTop = debugLog.scrollHeight;
+        }
+        
+        function clearLog() {
+            debugLog.innerHTML = '';
+        }
+        
+        // EXACT requester detection function
+        function getRequesterName(song) {
+            let requestedBy = 'Unknown';
+            
+            log(`🔍 Song: ${song.title}`, 'info');
+            
+            // Check requests array
+            if (song.requests && Array.isArray(song.requests) && song.requests.length > 0) {
+                const req = song.requests[0];
+                log(`📋 Request data: ${JSON.stringify(req)}`, 'info');
+                
+                if (req.name) {
+                    requestedBy = req.name;
+                    log(`✅ Found name: ${requestedBy}`, 'success');
+                } else {
+                    log(`❌ No name in request`, 'error');
+                }
+            } else {
+                log(`❌ No requests array`, 'error');
+            }
+            
+            return requestedBy;
+        }
+        
+        function displaySong(song, position, total) {
+            const artist = allCaps ? song.artist.toUpperCase() : song.artist;
+            const title = allCaps ? song.title.toUpperCase() : song.title;
+            const requestedBy = getRequesterName(song);
+            const displayRequestedBy = allCaps ? requestedBy.toUpperCase() : requestedBy;
+            
+            const html = `
+                <div class="song-container static">
+                    <div class="song-position">POSITION ${position}/${total}</div>
+                    <div class="song-title">${title}</div>
+                    <div class="song-artist">BY ${artist}</div>
+                    <div class="song-requester">REQUESTED BY ${displayRequestedBy}</div>
+                </div>
+            `;
+            
+            $("#queue-wrapper").html(html);
+            
+            log(`📤 Final display: ${displayRequestedBy}`, requestedBy !== 'Unknown' ? 'success' : 'error');
+        }
+        
+        function testRequesterDetection() {
+            clearLog();
+            log('🚀 Starting requester detection test...', 'info');
+            
+            const url = apiUrl + "streamers/" + streamerName + "/queue";
+            
+            $.ajax({
+                url: url,
+                method: 'GET',
+                timeout: 10000,
+                success: function(data) {
+                    log('✅ API connected successfully', 'success');
+                    log(`📊 Found ${data.list ? data.list.length : 0} songs`, 'info');
+                    
+                    if (data.list && data.list.length > 0) {
+                        // Sort by position
+                        data.list.sort((a, b) => a.position - b.position);
+                        
+                        // Test first song
+                        const firstSong = data.list[0];
+                        log('--- Testing First Song ---', 'info');
+                        displaySong(firstSong, 1, data.list.length);
+                        
+                        // Log all songs for debugging
+                        log('--- All Songs Data ---', 'info');
+                        data.list.forEach((song, index) => {
+                            log(`Song ${index + 1}: ${song.title}`, 'info');
+                            if (song.requests && song.requests[0]) {
+                                log(`  Requester: ${song.requests[0].name || 'NO NAME'}`, song.requests[0].name ? 'success' : 'error');
+                            } else {
+                                log(`  No requests data`, 'error');
+                            }
+                        });
+                        
+                    } else {
+                        log('❌ No songs in queue', 'error');
+                        $("#queue-wrapper").html(`
+                            <div class="song-container static">
+                                <div class="song-position">NO SONGS</div>
+                                <div class="song-title">QUEUE IS EMPTY</div>
+                                <div class="song-artist">ADD SONGS TO TEST</div>
+                                <div class="song-requester">STREAMERSONGLIST.COM</div>
+                            </div>
+                        `);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    log(`❌ API Error: ${error}`, 'error');
+                    log(`Status: ${xhr.status}`, 'error');
+                    
+                    $("#queue-wrapper").html(`
+                        <div class="song-container static">
+                            <div class="song-position">ERROR</div>
+                            <div class="song-title">API CONNECTION FAILED</div>
+                            <div class="song-artist">CHECK NETWORK</div>
+                            <div class="song-requester">STREAMER: ${streamerName}</div>
+                        </div>
+                    `);
+                }
+            });
+        }
+        
+        // Initialize
+        $(document).ready(function() {
+            // Apply profile
+            if (typeof applyProfile !== 'undefined') {
+                applyProfile('superhero');
+            }
+            
+            // Start test
+            setTimeout(testRequesterDetection, 1000);
+        });
+    </script>
+</body>
+</html>

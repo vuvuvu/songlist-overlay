@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Fresh StreamerSongList Queue Overlay</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1024, height=768">
+    <link rel="stylesheet" href="queue.css?v=2024123001"/>
+    <link rel="stylesheet" href="profiles.css?v=2024123001"/>
+    
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="profiles.js?v=2024123001"></script>
+    <script src="profile-config.js?v=2024123001"></script>
+    <script src="https://cdn.socket.io/2.5.0/socket.io.js"></script>
+    <script src="lib/streamersonglist.js?v=2024123001"></script>
+</head>
+<body>
+    <div id="queue-wrapper">
+        <!-- Queue content will be dynamically inserted here -->
+    </div>
+    
+    <!-- Debug info overlay -->
+    <div style="position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.8); color: white; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; z-index: 1000;" id="debugInfo">
+        Loading...
+    </div>
+    
+    <script>
+        // Add debug logging to see what's happening
+        const debugInfo = document.getElementById('debugInfo');
+        
+        function updateDebug(message) {
+            debugInfo.textContent = message;
+            console.log('DEBUG:', message);
+        }
+        
+        // Override console.log to also show in debug overlay
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            if (args[0] && typeof args[0] === 'string') {
+                if (args[0].includes('requester') || args[0].includes('Detecting') || args[0].includes('Found')) {
+                    updateDebug(args.join(' '));
+                }
+            }
+        };
+        
+        // Monitor for connection status changes
+        setInterval(() => {
+            const connectionEl = document.getElementById('connection-status');
+            if (connectionEl) {
+                const isConnected = connectionEl.textContent === 'Connected';
+                if (isConnected) {
+                    updateDebug('✅ Connected & Working');
+                } else {
+                    updateDebug('❌ Disconnected');
+                }
+            }
+        }, 2000);
+        
+        updateDebug('Overlay loaded, checking...');
+    </script>
+</body>
+</html>

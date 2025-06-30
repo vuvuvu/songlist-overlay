@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Connection Debug Tool</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            background: #2d2d2d;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        
+        .section h2 {
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: end;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .control-group label {
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        
+        input, button {
+            padding: 10px 15px;
+            background: #3a3a3a;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        
+        button {
+            background: #4CAF50;
+            cursor: pointer;
+            font-weight: bold;
+            border: none;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .status.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196F3;
+            color: #2196F3;
+        }
+        
+        .output {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            white-space: pre-wrap;
+        }
+        
+        .test-result {
+            background: #2a2a2a;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .test-result h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .connection-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .connected {
+            background: #4CAF50;
+        }
+        
+        .disconnected {
+            background: #f44336;
+        }
+        
+        .connecting {
+            background: #ff9800;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .fix-section {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid #4CAF50;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .fix-section h3 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 Connection Debug Tool</h1>
+        
+        <div class="section">
+            <h2>Configuration Check</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Streamer Name:</label>
+                    <input type="text" id="streamerName" placeholder="Your Twitch username" value="belleune">
+                </div>
+                <div class="control-group">
+                    <label>Streamer ID:</label>
+                    <input type="number" id="streamerId" placeholder="Your streamer ID" value="287">
+                </div>
+                <div class="control-group">
+                    <label>Actions:</label>
+                    <button onclick="testConnection()">🔍 Test Connection</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Connection Status</h2>
+            <div id="connectionStatus">
+                <div class="status info">
+                    <span class="connection-indicator disconnected"></span>
+                    Ready to test connection...
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Test Results</h2>
+            <div id="testResults">
+                <div class="output">Click "Test Connection" to start diagnostics...</div>
+            </div>
+        </div>
+        
+        <div class="fix-section" id="fixSection" style="display: none;">
+            <h3>🔧 Connection Fix</h3>
+            <div id="fixInstructions"></div>
+        </div>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.socket.io/2.5.0/socket.io.js"></script>
+    
+    <script>
+        let testSocket = null;
+        
+        function updateStatus(message, type, indicator = 'disconnected') {
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.innerHTML = `
+                <div class="status ${type}">
+                    <span class="connection-indicator ${indicator}"></span>
+                    ${message}
+                </div>
+            `;
+        }
+        
+        function logResult(message) {
+            const output = document.getElementById('testResults');
+            const timestamp = new Date().toLocaleTimeString();
+            output.innerHTML += `[${timestamp}] ${message}\n`;
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        function testConnection() {
+            const streamerName = document.getElementById('streamerName').value.trim();
+            const streamerId = document.getElementById('streamerId').value.trim();
+            
+            if (!streamerName || !streamerId) {
+                updateStatus('Please enter both streamer name and ID', 'error');
+                return;
+            }
+            
+            // Clear previous results
+            document.getElementById('testResults').innerHTML = '';
+            document.getElementById('fixSection').style.display = 'none';
+            
+            updateStatus('Testing connection...', 'info', 'connecting');
+            logResult('🔍 Starting connection diagnostics...');
+            logResult(`📋 Streamer: ${streamerName} (ID: ${streamerId})`);
+            
+            // Test 1: API Connection
+            testAPIConnection(streamerName, streamerId);
+        }
+        
+        function testAPIConnection(streamerName, streamerId) {
+            logResult('\n📡 Testing API connection...');
+            
+            const apiUrl = `https://api.streamersonglist.com/v1/streamers/${streamerName}/queue`;
+            
+            $.ajax({
+                url: apiUrl,
+                method: 'GET',
+                timeout: 10000,
+                success: function(data) {
+                    logResult('✅ API connection successful');
+                    logResult(`📊 Queue has ${data.list ? data.list.length : 0} songs`);
+                    
+                    if (data.list && data.list.length > 0) {
+                        logResult('📝 Sample song data:');
+                        const song = data.list[0];
+                        logResult(`   Title: ${song.title}`);
+                        logResult(`   Artist: ${song.artist}`);
+                        if (song.requests && song.requests[0]) {
+                            logResult(`   Requester: ${song.requests[0].name || 'No name found'}`);
+                        }
+                    }
+                    
+                    // Test 2: WebSocket Connection
+                    testWebSocketConnection(streamerId);
+                },
+                error: function(xhr, status, error) {
+                    logResult(`❌ API connection failed: ${error}`);
+                    logResult(`   Status: ${xhr.status}`);
+                    logResult(`   Response: ${xhr.responseText}`);
+                    
+                    updateStatus('API connection failed', 'error');
+                    showAPIFix(streamerName);
+                }
+            });
+        }
+        
+        function testWebSocketConnection(streamerId) {
+            logResult('\n🔌 Testing WebSocket connection...');
+            
+            try {
+                // Clean up existing socket
+                if (testSocket) {
+                    testSocket.disconnect();
+                }
+                
+                testSocket = io("https://api.streamersonglist.com", {
+                    timeout: 10000,
+                    transports: ['websocket', 'polling']
+                });
+                
+                let connectionTimeout = setTimeout(() => {
+                    logResult('❌ WebSocket connection timeout (10 seconds)');
+                    updateStatus('WebSocket connection timeout', 'error');
+                    showWebSocketFix();
+                }, 10000);
+                
+                testSocket.on("connect", () => {
+                    clearTimeout(connectionTimeout);
+                    logResult('✅ WebSocket connected successfully');
+                    logResult(`🏠 Joining room: ${streamerId}`);
+                    
+                    testSocket.emit("join-room", `${streamerId}`);
+                    
+                    updateStatus('Connection successful!', 'success', 'connected');
+                    logResult('🎉 All connections working properly');
+                    
+                    showSuccessMessage();
+                });
+                
+                testSocket.on("disconnect", (reason) => {
+                    logResult(`🔌 WebSocket disconnected: ${reason}`);
+                });
+                
+                testSocket.on("connect_error", (error) => {
+                    clearTimeout(connectionTimeout);
+                    logResult(`❌ WebSocket connection error: ${error.message}`);
+                    updateStatus('WebSocket connection failed', 'error');
+                    showWebSocketFix();
+                });
+                
+                testSocket.on("queue-update", () => {
+                    logResult('📡 Received queue-update event');
+                });
+                
+                testSocket.on("new-song", (data) => {
+                    logResult('🎵 Received new-song event');
+                });
+                
+            } catch (error) {
+                logResult(`❌ WebSocket setup error: ${error.message}`);
+                updateStatus('WebSocket setup failed', 'error');
+                showWebSocketFix();
+            }
+        }
+        
+        function showAPIFix(streamerName) {
+            const fixSection = document.getElementById('fixSection');
+            const fixInstructions = document.getElementById('fixInstructions');
+            
+            fixInstructions.innerHTML = `
+                <h4>API Connection Issues:</h4>
+                <ul>
+                    <li><strong>Check streamer name:</strong> Make sure "${streamerName}" is correct and matches your StreamerSongList account</li>
+                    <li><strong>Account verification:</strong> Ensure your StreamerSongList account is active</li>
+                    <li><strong>Network issues:</strong> Check your internet connection</li>
+                    <li><strong>CORS issues:</strong> Try opening the overlay from a local server instead of file://</li>
+                </ul>
+                
+                <h4>Quick Fixes:</h4>
+                <ol>
+                    <li>Verify your streamer name at <a href="https://streamersonglist.com" target="_blank">streamersonglist.com</a></li>
+                    <li>Check if you can access your queue on the website</li>
+                    <li>Try a different browser</li>
+                    <li>Disable browser extensions temporarily</li>
+                </ol>
+            `;
+            
+            fixSection.style.display = 'block';
+        }
+        
+        function showWebSocketFix() {
+            const fixSection = document.getElementById('fixSection');
+            const fixInstructions = document.getElementById('fixInstructions');
+            
+            fixInstructions.innerHTML = `
+                <h4>WebSocket Connection Issues:</h4>
+                <ul>
+                    <li><strong>Firewall/Antivirus:</strong> May be blocking WebSocket connections</li>
+                    <li><strong>Network restrictions:</strong> Corporate/school networks often block WebSockets</li>
+                    <li><strong>Browser issues:</strong> Some browsers have WebSocket restrictions</li>
+                    <li><strong>Server issues:</strong> StreamerSongList WebSocket server might be down</li>
+                </ul>
+                
+                <h4>Solutions:</h4>
+                <ol>
+                    <li><strong>Try a different network:</strong> Use mobile hotspot or different WiFi</li>
+                    <li><strong>Disable firewall temporarily:</strong> Test if firewall is blocking connection</li>
+                    <li><strong>Try different browser:</strong> Chrome, Firefox, Edge</li>
+                    <li><strong>Check StreamerSongList status:</strong> Visit their website to see if service is up</li>
+                    <li><strong>Use polling fallback:</strong> The overlay should still work with API polling</li>
+                </ol>
+                
+                <h4>Workaround:</h4>
+                <p>Even without WebSocket, the overlay will still work by polling the API every few seconds. 
+                You'll just miss real-time updates when songs are added/removed.</p>
+            `;
+            
+            fixSection.style.display = 'block';
+        }
+        
+        function showSuccessMessage() {
+            const fixSection = document.getElementById('fixSection');
+            const fixInstructions = document.getElementById('fixInstructions');
+            
+            fixInstructions.innerHTML = `
+                <h4>🎉 Connection Successful!</h4>
+                <p>Both API and WebSocket connections are working properly.</p>
+                
+                <h4>Next Steps:</h4>
+                <ol>
+                    <li>Your overlay should now show "Connected" status</li>
+                    <li>Requester names should display correctly</li>
+                    <li>Real-time updates will work when songs are added/removed</li>
+                    <li>Try adding a song to your queue to test live updates</li>
+                </ol>
+                
+                <div style="margin-top: 15px;">
+                    <a href="queue.html" target="_blank" style="display: inline-block; padding: 10px 20px; background: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">
+                        🎯 Open Your Overlay
+                    </a>
+                </div>
+            `;
+            
+            fixSection.style.display = 'block';
+        }
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (testSocket) {
+                testSocket.disconnect();
+            }
+        });
+    </script>
+</body>
+</html>

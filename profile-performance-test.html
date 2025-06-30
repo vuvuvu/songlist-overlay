@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Profile Performance Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="queue.css"/>
+    <link rel="stylesheet" href="profiles.css"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-test {
+            background: #2d2d2d;
+            border-radius: 10px;
+            padding: 15px;
+            border: 2px solid #444;
+        }
+        
+        .profile-test.testing {
+            border-color: #ff9800;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.3);
+        }
+        
+        .profile-test.passed {
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+        }
+        
+        .profile-test.failed {
+            border-color: #f44336;
+            box-shadow: 0 0 10px rgba(244, 67, 54, 0.3);
+        }
+        
+        .profile-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #FFD700;
+        }
+        
+        .test-preview {
+            width: 100%;
+            height: 150px;
+            border: 1px solid #666;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.3);
+            transform-origin: top left;
+        }
+        
+        .test-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+        
+        .metric {
+            background: #3a3a3a;
+            padding: 8px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        
+        .metric-label {
+            color: #ccc;
+            font-size: 0.8em;
+        }
+        
+        .metric-value {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .metric-value.good {
+            color: #4CAF50;
+        }
+        
+        .metric-value.warning {
+            color: #ff9800;
+        }
+        
+        .metric-value.bad {
+            color: #f44336;
+        }
+        
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .control-btn {
+            padding: 12px 24px;
+            margin: 0 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .control-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        .control-btn.secondary {
+            background: #2196F3;
+        }
+        
+        .control-btn.secondary:hover {
+            background: #1976D2;
+        }
+        
+        .overall-results {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .result-summary {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+        
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #444;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .log-output {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 2px 0;
+        }
+        
+        .log-entry.info {
+            color: #2196F3;
+        }
+        
+        .log-entry.success {
+            color: #4CAF50;
+        }
+        
+        .log-entry.warning {
+            color: #ff9800;
+        }
+        
+        .log-entry.error {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧪 Profile Performance Test</h1>
+            <p>Comprehensive testing of all 14 profiles for performance, compatibility, and visual quality</p>
+        </div>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="runAllTests()">🚀 Run All Tests</button>
+            <button class="control-btn secondary" onclick="runQuickTest()">⚡ Quick Test</button>
+            <button class="control-btn secondary" onclick="runStressTest()">💪 Stress Test</button>
+            <button class="control-btn secondary" onclick="clearResults()">🗑️ Clear Results</button>
+        </div>
+        
+        <div class="overall-results" id="overallResults" style="display: none;">
+            <div class="result-summary" id="resultSummary">Testing in progress...</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="result-details" id="resultDetails"></div>
+        </div>
+        
+        <div class="test-grid" id="testGrid">
+            <!-- Test results will be populated here -->
+        </div>
+        
+        <div class="log-output" id="logOutput">
+            <div class="log-entry info">Ready to run tests. Click "Run All Tests" to begin.</div>
+        </div>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="profiles.js"></script>
+    <script src="profile-config.js"></script>
+    
+    <script>
+        const profiles = [
+            'superhero', 'minimal', 'neon', 'retro', 'elegant',
+            'gaming', 'music', 'chatting', 'horror', 'kawaii',
+            'synthwave', 'nature', 'corporate'
+        ];
+        
+        let testResults = {};
+        let currentTestIndex = 0;
+        let isTestingRunning = false;
+        
+        // Test configuration
+        const testConfig = {
+            loadTime: 1000,      // Time to wait for profile to load
+            measureTime: 3000,   // Time to measure performance
+            fpsThreshold: 30,    // Minimum acceptable FPS
+            memoryThreshold: 50  // Maximum memory usage (MB)
+        };
+        
+        function log(message, type = 'info') {
+            const logOutput = document.getElementById('logOutput');
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logOutput.appendChild(entry);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+        
+        function updateProgress(current, total) {
+            const progressFill = document.getElementById('progressFill');
+            const percentage = (current / total) * 100;
+            progressFill.style.width = `${percentage}%`;
+        }
+        
+        async function runAllTests() {
+            if (isTestingRunning) {
+                log('Test already running!', 'warning');
+                return;
+            }
+            
+            isTestingRunning = true;
+            log('Starting comprehensive profile tests...', 'info');
+            
+            document.getElementById('overallResults').style.display = 'block';
+            document.getElementById('resultSummary').textContent = 'Testing in progress...';
+            
+            initializeTestGrid();
+            
+            for (let i = 0; i < profiles.length; i++) {
+                const profileName = profiles[i];
+                log(`Testing profile: ${profileName}`, 'info');
+                
+                updateProgress(i, profiles.length);
+                await testProfile(profileName);
+                
+                // Small delay between tests
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            updateProgress(profiles.length, profiles.length);
+            generateOverallResults();
+            isTestingRunning = false;
+            
+            log('All tests completed!', 'success');
+        }
+        
+        async function runQuickTest() {
+            if (isTestingRunning) return;
+            
+            isTestingRunning = true;
+            log('Running quick compatibility test...', 'info');
+            
+            const quickProfiles = ['superhero', 'minimal', 'gaming', 'corporate'];
+            document.getElementById('overallResults').style.display = 'block';
+            initializeTestGrid();
+            
+            for (let i = 0; i < quickProfiles.length; i++) {
+                const profileName = quickProfiles[i];
+                updateProgress(i, quickProfiles.length);
+                await testProfile(profileName, true); // Quick mode
+            }
+            
+            updateProgress(quickProfiles.length, quickProfiles.length);
+            generateOverallResults();
+            isTestingRunning = false;
+            
+            log('Quick test completed!', 'success');
+        }
+        
+        async function runStressTest() {
+            if (isTestingRunning) return;
+            
+            isTestingRunning = true;
+            log('Running stress test with rapid profile switching...', 'info');
+            
+            document.getElementById('overallResults').style.display = 'block';
+            initializeTestGrid();
+            
+            // Rapid switching test
+            for (let cycle = 0; cycle < 3; cycle++) {
+                for (let i = 0; i < profiles.length; i++) {
+                    const profileName = profiles[i];
+                    updateProgress(cycle * profiles.length + i, 3 * profiles.length);
+                    
+                    if (typeof applyProfile !== 'undefined') {
+                        applyProfile(profileName);
+                    }
+                    
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                }
+            }
+            
+            // Final performance measurement
+            await testProfile('superhero');
+            
+            updateProgress(3 * profiles.length, 3 * profiles.length);
+            generateOverallResults();
+            isTestingRunning = false;
+            
+            log('Stress test completed!', 'success');
+        }
+        
+        function initializeTestGrid() {
+            const testGrid = document.getElementById('testGrid');
+            testGrid.innerHTML = '';
+            
+            profiles.forEach(profileName => {
+                const testCard = createTestCard(profileName);
+                testGrid.appendChild(testCard);
+            });
+        }
+        
+        function createTestCard(profileName) {
+            const card = document.createElement('div');
+            card.className = 'profile-test';
+            card.id = `test-${profileName}`;
+            
+            card.innerHTML = `
+                <div class="profile-name">${profileName.charAt(0).toUpperCase() + profileName.slice(1)}</div>
+                <div class="test-preview" id="preview-${profileName}">
+                    <div id="queue-wrapper-${profileName}">
+                        <div class="song-container static">
+                            <div class="song-position">1</div>
+                            <div class="song-title">Test Song</div>
+                            <div class="song-artist">Test Artist</div>
+                            <div class="song-requester">Requested by Tester</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="test-metrics">
+                    <div class="metric">
+                        <div class="metric-label">Load Time</div>
+                        <div class="metric-value" id="loadtime-${profileName}">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">FPS</div>
+                        <div class="metric-value" id="fps-${profileName}">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Memory</div>
+                        <div class="metric-value" id="memory-${profileName}">-</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Status</div>
+                        <div class="metric-value" id="status-${profileName}">Pending</div>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        async function testProfile(profileName, quickMode = false) {
+            const testCard = document.getElementById(`test-${profileName}`);
+            testCard.className = 'profile-test testing';
+            
+            const startTime = performance.now();
+            
+            try {
+                // Apply profile
+                if (typeof applyProfile !== 'undefined') {
+                    applyProfile(profileName);
+                } else {
+                    throw new Error('Profile system not loaded');
+                }
+                
+                // Wait for profile to load
+                await new Promise(resolve => setTimeout(resolve, quickMode ? 500 : testConfig.loadTime));
+                
+                const loadTime = performance.now() - startTime;
+                document.getElementById(`loadtime-${profileName}`).textContent = `${Math.round(loadTime)}ms`;
+                
+                // Measure performance
+                const performanceData = await measurePerformance(profileName, quickMode);
+                
+                // Update UI
+                updateTestResults(profileName, {
+                    loadTime: loadTime,
+                    ...performanceData,
+                    status: 'passed'
+                });
+                
+                testCard.className = 'profile-test passed';
+                log(`✅ ${profileName}: Passed (${Math.round(loadTime)}ms load, ${performanceData.fps} FPS)`, 'success');
+                
+            } catch (error) {
+                log(`❌ ${profileName}: Failed - ${error.message}`, 'error');
+                updateTestResults(profileName, {
+                    loadTime: -1,
+                    fps: 0,
+                    memory: 0,
+                    status: 'failed',
+                    error: error.message
+                });
+                testCard.className = 'profile-test failed';
+            }
+        }
+        
+        async function measurePerformance(profileName, quickMode = false) {
+            const measureDuration = quickMode ? 1000 : testConfig.measureTime;
+            const startTime = performance.now();
+            let frameCount = 0;
+            let maxMemory = 0;
+            
+            // Memory measurement (if available)
+            if (performance.memory) {
+                maxMemory = performance.memory.usedJSHeapSize / 1024 / 1024; // MB
+            }
+            
+            // FPS measurement
+            return new Promise(resolve => {
+                function measureFrame() {
+                    frameCount++;
+                    
+                    if (performance.memory) {
+                        const currentMemory = performance.memory.usedJSHeapSize / 1024 / 1024;
+                        maxMemory = Math.max(maxMemory, currentMemory);
+                    }
+                    
+                    if (performance.now() - startTime < measureDuration) {
+                        requestAnimationFrame(measureFrame);
+                    } else {
+                        const fps = Math.round((frameCount * 1000) / measureDuration);
+                        resolve({
+                            fps: fps,
+                            memory: Math.round(maxMemory)
+                        });
+                    }
+                }
+                
+                requestAnimationFrame(measureFrame);
+            });
+        }
+        
+        function updateTestResults(profileName, results) {
+            testResults[profileName] = results;
+            
+            // Update load time
+            const loadTimeEl = document.getElementById(`loadtime-${profileName}`);
+            if (results.loadTime > 0) {
+                loadTimeEl.textContent = `${Math.round(results.loadTime)}ms`;
+                loadTimeEl.className = results.loadTime < 1000 ? 'metric-value good' : 
+                                     results.loadTime < 2000 ? 'metric-value warning' : 'metric-value bad';
+            }
+            
+            // Update FPS
+            const fpsEl = document.getElementById(`fps-${profileName}`);
+            fpsEl.textContent = `${results.fps}`;
+            fpsEl.className = results.fps >= 60 ? 'metric-value good' : 
+                             results.fps >= 30 ? 'metric-value warning' : 'metric-value bad';
+            
+            // Update memory
+            const memoryEl = document.getElementById(`memory-${profileName}`);
+            if (results.memory > 0) {
+                memoryEl.textContent = `${results.memory}MB`;
+                memoryEl.className = results.memory < 30 ? 'metric-value good' : 
+                                    results.memory < 50 ? 'metric-value warning' : 'metric-value bad';
+            } else {
+                memoryEl.textContent = 'N/A';
+                memoryEl.className = 'metric-value';
+            }
+            
+            // Update status
+            const statusEl = document.getElementById(`status-${profileName}`);
+            statusEl.textContent = results.status === 'passed' ? '✅ Passed' : '❌ Failed';
+            statusEl.className = results.status === 'passed' ? 'metric-value good' : 'metric-value bad';
+        }
+        
+        function generateOverallResults() {
+            const totalTests = Object.keys(testResults).length;
+            const passedTests = Object.values(testResults).filter(r => r.status === 'passed').length;
+            const failedTests = totalTests - passedTests;
+            
+            const avgLoadTime = Object.values(testResults)
+                .filter(r => r.loadTime > 0)
+                .reduce((sum, r) => sum + r.loadTime, 0) / passedTests;
+            
+            const avgFPS = Object.values(testResults)
+                .filter(r => r.fps > 0)
+                .reduce((sum, r) => sum + r.fps, 0) / passedTests;
+            
+            const avgMemory = Object.values(testResults)
+                .filter(r => r.memory > 0)
+                .reduce((sum, r) => sum + r.memory, 0) / passedTests;
+            
+            document.getElementById('resultSummary').innerHTML = `
+                <div style="color: ${passedTests === totalTests ? '#4CAF50' : '#ff9800'}">
+                    ${passedTests}/${totalTests} profiles passed
+                </div>
+            `;
+            
+            document.getElementById('resultDetails').innerHTML = `
+                <div class="metric">
+                    <div class="metric-label">Average Load Time</div>
+                    <div class="metric-value ${avgLoadTime < 1000 ? 'good' : 'warning'}">${Math.round(avgLoadTime)}ms</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average FPS</div>
+                    <div class="metric-value ${avgFPS >= 60 ? 'good' : avgFPS >= 30 ? 'warning' : 'bad'}">${Math.round(avgFPS)}</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Average Memory</div>
+                    <div class="metric-value ${avgMemory < 30 ? 'good' : avgMemory < 50 ? 'warning' : 'bad'}">${Math.round(avgMemory)}MB</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-label">Failed Tests</div>
+                    <div class="metric-value ${failedTests === 0 ? 'good' : 'bad'}">${failedTests}</div>
+                </div>
+            `;
+        }
+        
+        function clearResults() {
+            testResults = {};
+            document.getElementById('testGrid').innerHTML = '';
+            document.getElementById('overallResults').style.display = 'none';
+            document.getElementById('logOutput').innerHTML = '<div class="log-entry info">Results cleared. Ready for new tests.</div>';
+            log('Results cleared', 'info');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            log('Profile Performance Test ready', 'info');
+            log('Available profiles: ' + profiles.join(', '), 'info');
+            
+            if (typeof applyProfile === 'undefined') {
+                log('Warning: Profile system not detected', 'warning');
+            } else {
+                log('Profile system loaded successfully', 'success');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Profile Showcase - StreamerSongList Overlay</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 3em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .intro {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .profile-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .profile-demo {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .profile-demo:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .profile-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .profile-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        
+        .profile-subtitle {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .profile-description {
+            margin-bottom: 20px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+        
+        .profile-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .feature-category {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 10px;
+        }
+        
+        .feature-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #FFD700;
+            font-size: 0.9em;
+        }
+        
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .feature-tag {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            border: 1px solid rgba(76, 175, 80, 0.5);
+        }
+        
+        .feature-tag.disabled {
+            background: rgba(244, 67, 54, 0.3);
+            color: #f44336;
+            border-color: rgba(244, 67, 54, 0.5);
+        }
+        
+        .use-cases {
+            margin-bottom: 20px;
+        }
+        
+        .use-case-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #FFD700;
+        }
+        
+        .use-case-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .use-case {
+            background: rgba(33, 150, 243, 0.3);
+            color: #2196F3;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            border: 1px solid rgba(33, 150, 243, 0.5);
+        }
+        
+        .try-button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+        
+        .try-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .category-section {
+            margin-bottom: 50px;
+        }
+        
+        .category-title {
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .navigation {
+            text-align: center;
+            margin-top: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+        }
+        
+        .nav-button {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 0 10px;
+            background: linear-gradient(45deg, #2196F3, #1976D2);
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .stats {
+            text-align: center;
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+        
+        .stat-label {
+            font-size: 1.1em;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Profile Showcase</h1>
+        
+        <div class="intro">
+            <p>Discover all available profiles for your StreamerSongList overlay. Each profile is designed for specific streaming scenarios and content types.</p>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-number">14</div>
+            <div class="stat-label">Total Profiles Available</div>
+        </div>
+        
+        <div class="category-section">
+            <h2 class="category-title">🎮 Content-Specific Profiles</h2>
+            <div class="profile-showcase">
+                
+                <div class="profile-demo">
+                    <div class="profile-header">
+                        <div class="profile-icon">🎮</div>
+                        <div>
+                            <div class="profile-title">Gaming</div>
+                            <div class="profile-subtitle">High-energy gaming streams</div>
+                        </div>
+                    </div>
+                    <div class="profile-description">
+                        Bold, high-contrast design with vibrant neon colors perfect for competitive gaming and action-packed streams.
+                    </div>
+                    <div class="profile-features">
+                        <div class="feature-category">
+                            <div class="feature-title">Effects</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Glow</span>
+                                <span class="feature-tag">Bounce</span>
+                                <span class="feature-tag">Sparkles</span>
+                            </div>
+                        </div>
+                        <div class="feature-category">
+                            <div class="feature-title">Colors</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Matrix Green</span>
+                                <span class="feature-tag">Hot Pink</span>
+                                <span class="feature-tag">Cyber Blue</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="use-cases">
+                        <div class="use-case-title">Perfect For:</div>
+                        <div class="use-case-list">
+                            <span class="use-case">FPS Games</span>
+                            <span class="use-case">Competitive Gaming</span>
+                            <span class="use-case">Action Games</span>
+                            <span class="use-case">Esports</span>
+                        </div>
+                    </div>
+                    <button class="try-button" onclick="tryProfile('gaming')">Try Gaming Profile</button>
+                </div>
+                
+                <div class="profile-demo">
+                    <div class="profile-header">
+                        <div class="profile-icon">🎵</div>
+                        <div>
+                            <div class="profile-title">Music</div>
+                            <div class="profile-subtitle">DJ and music streams</div>
+                        </div>
+                    </div>
+                    <div class="profile-description">
+                        Smooth, rhythmic design with purple and pink tones that flow with the beat of your music.
+                    </div>
+                    <div class="profile-features">
+                        <div class="feature-category">
+                            <div class="feature-title">Effects</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Pulse</span>
+                                <span class="feature-tag">Shimmer</span>
+                                <span class="feature-tag disabled">Bounce</span>
+                            </div>
+                        </div>
+                        <div class="feature-category">
+                            <div class="feature-title">Style</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Italic Text</span>
+                                <span class="feature-tag">Smooth Fonts</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="use-cases">
+                        <div class="use-case-title">Perfect For:</div>
+                        <div class="use-case-list">
+                            <span class="use-case">DJ Sets</span>
+                            <span class="use-case">Music Production</span>
+                            <span class="use-case">Concerts</span>
+                            <span class="use-case">Radio Shows</span>
+                        </div>
+                    </div>
+                    <button class="try-button" onclick="tryProfile('music')">Try Music Profile</button>
+                </div>
+                
+                <div class="profile-demo">
+                    <div class="profile-header">
+                        <div class="profile-icon">💬</div>
+                        <div>
+                            <div class="profile-title">Just Chatting</div>
+                            <div class="profile-subtitle">Talk shows and casual streams</div>
+                        </div>
+                    </div>
+                    <div class="profile-description">
+                        Clean, readable design that won't distract from conversation while maintaining visual appeal.
+                    </div>
+                    <div class="profile-features">
+                        <div class="feature-category">
+                            <div class="feature-title">Focus</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Readability</span>
+                                <span class="feature-tag">Subtle Effects</span>
+                            </div>
+                        </div>
+                        <div class="feature-category">
+                            <div class="feature-title">Colors</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Soft Blue</span>
+                                <span class="feature-tag">Warm Red</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="use-cases">
+                        <div class="use-case-title">Perfect For:</div>
+                        <div class="use-case-list">
+                            <span class="use-case">Talk Shows</span>
+                            <span class="use-case">Q&A Sessions</span>
+                            <span class="use-case">Casual Chats</span>
+                            <span class="use-case">Interviews</span>
+                        </div>
+                    </div>
+                    <button class="try-button" onclick="tryProfile('chatting')">Try Chatting Profile</button>
+                </div>
+                
+                <div class="profile-demo">
+                    <div class="profile-header">
+                        <div class="profile-icon">👻</div>
+                        <div>
+                            <div class="profile-title">Horror</div>
+                            <div class="profile-subtitle">Spooky and scary content</div>
+                        </div>
+                    </div>
+                    <div class="profile-description">
+                        Dark, atmospheric design with blood-red colors and flickering effects to enhance the horror experience.
+                    </div>
+                    <div class="profile-features">
+                        <div class="feature-category">
+                            <div class="feature-title">Effects</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Flicker</span>
+                                <span class="feature-tag">Horror Glow</span>
+                                <span class="feature-tag">Dark Shadows</span>
+                            </div>
+                        </div>
+                        <div class="feature-category">
+                            <div class="feature-title">Fonts</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Creepster</span>
+                                <span class="feature-tag">Nosifer</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="use-cases">
+                        <div class="use-case-title">Perfect For:</div>
+                        <div class="use-case-list">
+                            <span class="use-case">Horror Games</span>
+                            <span class="use-case">Scary Stories</span>
+                            <span class="use-case">Halloween Streams</span>
+                            <span class="use-case">Thriller Content</span>
+                        </div>
+                    </div>
+                    <button class="try-button" onclick="tryProfile('horror')">Try Horror Profile</button>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="category-section">
+            <h2 class="category-title">🎨 Aesthetic Profiles</h2>
+            <div class="profile-showcase">
+                
+                <div class="profile-demo">
+                    <div class="profile-header">
+                        <div class="profile-icon">🌸</div>
+                        <div>
+                            <div class="profile-title">Kawaii</div>
+                            <div class="profile-subtitle">Cute and colorful anime style</div>
+                        </div>
+                    </div>
+                    <div class="profile-description">
+                        Adorable pastel design with pink tones and playful effects perfect for anime and art streams.
+                    </div>
+                    <div class="profile-features">
+                        <div class="feature-category">
+                            <div class="feature-title">Style</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Pastel Colors</span>
+                                <span class="feature-tag">Cute Fonts</span>
+                                <span class="feature-tag">Sparkles</span>
+                            </div>
+                        </div>
+                        <div class="feature-category">
+                            <div class="feature-title">Effects</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Bounce</span>
+                                <span class="feature-tag">Float</span>
+                                <span class="feature-tag">Shimmer</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="use-cases">
+                        <div class="use-case-title">Perfect For:</div>
+                        <div class="use-case-list">
+                            <span class="use-case">Anime Content</span>
+                            <span class="use-case">Art Streams</span>
+                            <span class="use-case">Kawaii Games</span>
+                            <span class="use-case">Cute Content</span>
+                        </div>
+                    </div>
+                    <button class="try-button" onclick="tryProfile('kawaii')">Try Kawaii Profile</button>
+                </div>
+                
+                <div class="profile-demo">
+                    <div class="profile-header">
+                        <div class="profile-icon">🌊</div>
+                        <div>
+                            <div class="profile-title">Synthwave</div>
+                            <div class="profile-subtitle">80s retro-futuristic vibes</div>
+                        </div>
+                    </div>
+                    <div class="profile-description">
+                        Neon-soaked aesthetic with grid patterns and electric colors reminiscent of 80s sci-fi.
+                    </div>
+                    <div class="profile-features">
+                        <div class="feature-category">
+                            <div class="feature-title">Colors</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Neon Pink</span>
+                                <span class="feature-tag">Electric Blue</span>
+                                <span class="feature-tag">Laser Yellow</span>
+                            </div>
+                        </div>
+                        <div class="feature-category">
+                            <div class="feature-title">Effects</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Grid Animation</span>
+                                <span class="feature-tag">Neon Glow</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="use-cases">
+                        <div class="use-case-title">Perfect For:</div>
+                        <div class="use-case-list">
+                            <span class="use-case">Synthwave Music</span>
+                            <span class="use-case">Retro Games</span>
+                            <span class="use-case">Cyberpunk Content</span>
+                            <span class="use-case">80s Nostalgia</span>
+                        </div>
+                    </div>
+                    <button class="try-button" onclick="tryProfile('synthwave')">Try Synthwave Profile</button>
+                </div>
+                
+                <div class="profile-demo">
+                    <div class="profile-header">
+                        <div class="profile-icon">🌿</div>
+                        <div>
+                            <div class="profile-title">Nature</div>
+                            <div class="profile-subtitle">Earthy and organic design</div>
+                        </div>
+                    </div>
+                    <div class="profile-description">
+                        Warm, natural colors with organic styling perfect for outdoor and nature-focused content.
+                    </div>
+                    <div class="profile-features">
+                        <div class="feature-category">
+                            <div class="feature-title">Colors</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Forest Green</span>
+                                <span class="feature-tag">Earth Brown</span>
+                                <span class="feature-tag">Golden Yellow</span>
+                            </div>
+                        </div>
+                        <div class="feature-category">
+                            <div class="feature-title">Style</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Serif Fonts</span>
+                                <span class="feature-tag">Organic Shapes</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="use-cases">
+                        <div class="use-case-title">Perfect For:</div>
+                        <div class="use-case-list">
+                            <span class="use-case">Outdoor Streams</span>
+                            <span class="use-case">Nature Content</span>
+                            <span class="use-case">Gardening</span>
+                            <span class="use-case">Eco-friendly Topics</span>
+                        </div>
+                    </div>
+                    <button class="try-button" onclick="tryProfile('nature')">Try Nature Profile</button>
+                </div>
+                
+                <div class="profile-demo">
+                    <div class="profile-header">
+                        <div class="profile-icon">💼</div>
+                        <div>
+                            <div class="profile-title">Corporate</div>
+                            <div class="profile-subtitle">Professional business style</div>
+                        </div>
+                    </div>
+                    <div class="profile-description">
+                        Clean, professional design with no distracting effects, perfect for business presentations and corporate streams.
+                    </div>
+                    <div class="profile-features">
+                        <div class="feature-category">
+                            <div class="feature-title">Style</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag">Clean Lines</span>
+                                <span class="feature-tag">Professional Fonts</span>
+                            </div>
+                        </div>
+                        <div class="feature-category">
+                            <div class="feature-title">Effects</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag disabled">No Animations</span>
+                                <span class="feature-tag disabled">No Glow</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="use-cases">
+                        <div class="use-case-title">Perfect For:</div>
+                        <div class="use-case-list">
+                            <span class="use-case">Business Streams</span>
+                            <span class="use-case">Presentations</span>
+                            <span class="use-case">Corporate Events</span>
+                            <span class="use-case">Professional Content</span>
+                        </div>
+                    </div>
+                    <button class="try-button" onclick="tryProfile('corporate')">Try Corporate Profile</button>
+                </div>
+                
+            </div>
+        </div>
+        
+        <div class="navigation">
+            <h2>Ready to Customize Your Overlay?</h2>
+            <p>Choose from 14 unique profiles or create your own custom style</p>
+            <a href="profile-selector.html" class="nav-button">🎨 Open Profile Selector</a>
+            <a href="queue.html" class="nav-button">👁️ Preview Overlay</a>
+            <a href="PROFILE_GUIDE.md" class="nav-button">📖 Read Documentation</a>
+        </div>
+    </div>
+
+    <script>
+        function tryProfile(profileName) {
+            // Open profile selector with the specific profile
+            const url = `profile-selector.html#${profileName}`;
+            window.open(url, '_blank');
+        }
+        
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const demos = document.querySelectorAll('.profile-demo');
+            
+            demos.forEach((demo, index) => {
+                // Stagger the initial animation
+                setTimeout(() => {
+                    demo.style.opacity = '0';
+                    demo.style.transform = 'translateY(20px)';
+                    demo.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        demo.style.opacity = '1';
+                        demo.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Socket.IO Fix Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .fix-applied {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .status.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196F3;
+            color: #2196F3;
+        }
+        
+        .action-btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.1em;
+        }
+        
+        .action-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .action-btn.secondary {
+            background: #2196F3;
+        }
+        
+        .action-btn.secondary:hover {
+            background: #1976D2;
+        }
+        
+        .connection-indicator {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        .connected {
+            background: #4CAF50;
+            box-shadow: 0 0 10px #4CAF50;
+        }
+        
+        .disconnected {
+            background: #f44336;
+        }
+        
+        .connecting {
+            background: #ff9800;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .code {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Socket.IO Fix Applied</h1>
+        
+        <div class="fix-applied">
+            <h2>✅ Version Compatibility Fixed!</h2>
+            <p>Updated from Socket.IO v4.x to v2.x to match StreamerSongList server</p>
+            <div style="margin-top: 15px;">
+                <span class="code">v4.7.5</span> → <span class="code">v2.5.0</span>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>🔌 Connection Test</h2>
+            <div id="connectionStatus" class="status info">
+                <span class="connection-indicator connecting"></span>
+                Testing connection...
+            </div>
+            
+            <button class="action-btn" onclick="testConnection()">🔍 Test WebSocket Connection</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>🎯 Test Your Overlay</h2>
+            <p>Now that the Socket.IO version is fixed, your overlay should show "Connected" status:</p>
+            
+            <div style="margin-top: 20px;">
+                <a href="queue.html" class="action-btn" target="_blank">🎯 Open Main Overlay</a>
+                <a href="simple-overlay-test.html" class="action-btn secondary" target="_blank">🧪 Open Test Overlay</a>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>✅ Expected Results</h2>
+            <div style="text-align: left; max-width: 600px; margin: 0 auto;">
+                <h3>You should now see:</h3>
+                <ul>
+                    <li>✅ <strong>Connection status:</strong> "Connected" instead of "Disconnected"</li>
+                    <li>✅ <strong>Requester names:</strong> "lightmaxime" instead of "Unknown"</li>
+                    <li>✅ <strong>Real-time updates:</strong> Instant updates when songs are added/removed</li>
+                    <li>✅ <strong>WebSocket events:</strong> Live notifications for queue changes</li>
+                </ul>
+                
+                <h3>Browser Console Should Show:</h3>
+                <ul>
+                    <li><span class="code">"Connected to StreamerSongList WebSocket"</span></li>
+                    <li><span class="code">"Found requester name: lightmaxime"</span></li>
+                    <li><span class="code">"Final requester result: lightmaxime"</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/2.5.0/socket.io.js"></script>
+    
+    <script>
+        let testSocket = null;
+        
+        function updateConnectionStatus(message, type, indicator = 'disconnected') {
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.innerHTML = `
+                <span class="connection-indicator ${indicator}"></span>
+                ${message}
+            `;
+            statusEl.className = `status ${type}`;
+        }
+        
+        function testConnection() {
+            updateConnectionStatus('Testing connection...', 'info', 'connecting');
+            
+            try {
+                // Clean up existing socket
+                if (testSocket) {
+                    testSocket.disconnect();
+                }
+                
+                testSocket = io("https://api.streamersonglist.com", {
+                    transports: ['websocket', 'polling']
+                });
+                
+                let connectionTimeout = setTimeout(() => {
+                    updateConnectionStatus('❌ Connection timeout (10 seconds)', 'error', 'disconnected');
+                }, 10000);
+                
+                testSocket.on("connect", () => {
+                    clearTimeout(connectionTimeout);
+                    updateConnectionStatus('✅ WebSocket connected successfully!', 'success', 'connected');
+                    
+                    // Test joining a room
+                    testSocket.emit("join-room", "287");
+                    
+                    setTimeout(() => {
+                        updateConnectionStatus('🎉 Connection working perfectly! Check your overlay now.', 'success', 'connected');
+                    }, 1000);
+                });
+                
+                testSocket.on("connect_error", (error) => {
+                    clearTimeout(connectionTimeout);
+                    updateConnectionStatus(`❌ Connection error: ${error.message}`, 'error', 'disconnected');
+                });
+                
+                testSocket.on("disconnect", (reason) => {
+                    updateConnectionStatus(`🔌 Disconnected: ${reason}`, 'info', 'disconnected');
+                });
+                
+            } catch (error) {
+                updateConnectionStatus(`❌ Setup error: ${error.message}`, 'error', 'disconnected');
+            }
+        }
+        
+        // Auto-test on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testConnection, 1000);
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (testSocket) {
+                testSocket.disconnect();
+            }
+        });
+    </script>
+</body>
+</html>

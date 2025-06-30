@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Profile Tester - StreamerSongList Overlay</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="queue.css"/>
+    <link rel="stylesheet" href="profiles.css"/>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #1a1a1a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .tester-container {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            height: 100vh;
+        }
+        
+        .control-panel {
+            background: #2d2d2d;
+            color: white;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 2px solid #444;
+        }
+        
+        .preview-area {
+            position: relative;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .overlay-frame {
+            width: 1024px;
+            height: 768px;
+            border: 2px solid #444;
+            position: relative;
+            transform: scale(0.8);
+            transform-origin: center;
+        }
+        
+        .control-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: #3a3a3a;
+            border-radius: 10px;
+        }
+        
+        .control-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #FFD700;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+        }
+        
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .profile-btn {
+            padding: 8px 12px;
+            background: #4a4a4a;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+        
+        .profile-btn:hover {
+            background: #5a5a5a;
+        }
+        
+        .profile-btn.active {
+            background: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+        }
+        
+        .song-controls {
+            margin-bottom: 15px;
+        }
+        
+        .song-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 8px;
+            background: #4a4a4a;
+            color: white;
+            border: 1px solid #666;
+            border-radius: 5px;
+        }
+        
+        .song-input:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        .test-songs {
+            margin-bottom: 15px;
+        }
+        
+        .test-song-btn {
+            display: block;
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 5px;
+            background: #555;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.85em;
+        }
+        
+        .test-song-btn:hover {
+            background: #666;
+        }
+        
+        .effect-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .effect-toggle {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .effect-toggle input {
+            margin-right: 8px;
+        }
+        
+        .effect-toggle label {
+            font-size: 0.9em;
+            cursor: pointer;
+        }
+        
+        .current-profile-info {
+            background: #2a2a2a;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            line-height: 1.4;
+        }
+        
+        .info-label {
+            color: #FFD700;
+            font-weight: bold;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .action-btn {
+            padding: 10px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .action-btn:hover {
+            background: #1976D2;
+        }
+        
+        .action-btn.danger {
+            background: #f44336;
+        }
+        
+        .action-btn.danger:hover {
+            background: #d32f2f;
+        }
+        
+        .status-bar {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        
+        .fps-counter {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #4CAF50;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-family: monospace;
+        }
+        
+        .performance-warning {
+            background: #ff9800;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            display: none;
+        }
+        
+        @media (max-width: 1400px) {
+            .overlay-frame {
+                transform: scale(0.6);
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .tester-container {
+                grid-template-columns: 250px 1fr;
+            }
+            .overlay-frame {
+                transform: scale(0.5);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="tester-container">
+        <div class="control-panel">
+            <h2 style="color: #FFD700; text-align: center; margin-bottom: 20px;">Profile Tester</h2>
+            
+            <div class="performance-warning" id="performanceWarning">
+                ⚠️ Some effects may impact performance. Disable animations if experiencing lag.
+            </div>
+            
+            <div class="control-section">
+                <div class="control-title">🎨 Profile Selection</div>
+                <div class="profile-grid">
+                    <button class="profile-btn active" onclick="testProfile('superhero')">Superhero</button>
+                    <button class="profile-btn" onclick="testProfile('minimal')">Minimal</button>
+                    <button class="profile-btn" onclick="testProfile('neon')">Neon</button>
+                    <button class="profile-btn" onclick="testProfile('retro')">Retro</button>
+                    <button class="profile-btn" onclick="testProfile('elegant')">Elegant</button>
+                    <button class="profile-btn" onclick="testProfile('gaming')">Gaming</button>
+                    <button class="profile-btn" onclick="testProfile('music')">Music</button>
+                    <button class="profile-btn" onclick="testProfile('chatting')">Chatting</button>
+                    <button class="profile-btn" onclick="testProfile('horror')">Horror</button>
+                    <button class="profile-btn" onclick="testProfile('kawaii')">Kawaii</button>
+                    <button class="profile-btn" onclick="testProfile('synthwave')">Synthwave</button>
+                    <button class="profile-btn" onclick="testProfile('nature')">Nature</button>
+                    <button class="profile-btn" onclick="testProfile('corporate')">Corporate</button>
+                </div>
+            </div>
+            
+            <div class="control-section">
+                <div class="control-title">🎵 Song Testing</div>
+                <div class="song-controls">
+                    <input type="text" class="song-input" id="songTitle" placeholder="Song Title" value="Never Gonna Give You Up">
+                    <input type="text" class="song-input" id="songArtist" placeholder="Artist" value="Rick Astley">
+                    <input type="text" class="song-input" id="songRequester" placeholder="Requested by" value="TestUser123">
+                    <button class="action-btn" onclick="updateTestSong()">Update Song</button>
+                </div>
+                
+                <div class="test-songs">
+                    <div style="font-size: 0.9em; margin-bottom: 8px; color: #ccc;">Quick Test Songs:</div>
+                    <button class="test-song-btn" onclick="loadTestSong('Bohemian Rhapsody', 'Queen', 'MusicLover')">Bohemian Rhapsody - Queen</button>
+                    <button class="test-song-btn" onclick="loadTestSong('Thunderstruck', 'AC/DC', 'RockFan99')">Thunderstruck - AC/DC</button>
+                    <button class="test-song-btn" onclick="loadTestSong('Anime Thighs', 'MC Virgins', 'WeebMaster')">Anime Thighs - MC Virgins</button>
+                    <button class="test-song-btn" onclick="loadTestSong('Cyberpunk 2077 OST', 'Various Artists', 'GamerGirl')">Cyberpunk 2077 OST</button>
+                    <button class="test-song-btn" onclick="loadTestSong('Lo-fi Hip Hop Mix', 'ChillBeats', 'StudyTime')">Lo-fi Hip Hop Mix</button>
+                </div>
+            </div>
+            
+            <div class="control-section">
+                <div class="control-title">⚡ Effect Controls</div>
+                <div class="effect-controls">
+                    <div class="effect-toggle">
+                        <input type="checkbox" id="animationsToggle" checked onchange="toggleEffect('animations')">
+                        <label for="animationsToggle">Animations</label>
+                    </div>
+                    <div class="effect-toggle">
+                        <input type="checkbox" id="glowToggle" checked onchange="toggleEffect('glow')">
+                        <label for="glowToggle">Glow</label>
+                    </div>
+                    <div class="effect-toggle">
+                        <input type="checkbox" id="bounceToggle" checked onchange="toggleEffect('bounce')">
+                        <label for="bounceToggle">Bounce</label>
+                    </div>
+                    <div class="effect-toggle">
+                        <input type="checkbox" id="pulseToggle" checked onchange="toggleEffect('pulse')">
+                        <label for="pulseToggle">Pulse</label>
+                    </div>
+                    <div class="effect-toggle">
+                        <input type="checkbox" id="shimmerToggle" checked onchange="toggleEffect('shimmer')">
+                        <label for="shimmerToggle">Shimmer</label>
+                    </div>
+                    <div class="effect-toggle">
+                        <input type="checkbox" id="sparklesToggle" checked onchange="toggleEffect('sparkles')">
+                        <label for="sparklesToggle">Sparkles</label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="control-section">
+                <div class="control-title">📊 Current Profile</div>
+                <div class="current-profile-info" id="profileInfo">
+                    <div><span class="info-label">Name:</span> <span id="profileName">Superhero</span></div>
+                    <div><span class="info-label">Description:</span> <span id="profileDesc">Loading...</span></div>
+                    <div><span class="info-label">Primary Font:</span> <span id="profileFont">Loading...</span></div>
+                    <div><span class="info-label">Effects:</span> <span id="profileEffects">Loading...</span></div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn" onclick="randomizeTest()">🎲 Random</button>
+                <button class="action-btn" onclick="cycleProfiles()">🔄 Cycle</button>
+                <button class="action-btn" onclick="exportProfile()">💾 Export</button>
+                <button class="action-btn danger" onclick="resetToDefault()">🔄 Reset</button>
+            </div>
+        </div>
+        
+        <div class="preview-area">
+            <div class="status-bar" id="statusBar">Profile: Superhero | Status: Ready</div>
+            <div class="fps-counter" id="fpsCounter">FPS: 60</div>
+            
+            <div class="overlay-frame" id="overlayFrame">
+                <div id="queue-wrapper">
+                    <div class="song-container static">
+                        <div class="song-position">1</div>
+                        <div class="song-title">Never Gonna Give You Up</div>
+                        <div class="song-artist">Rick Astley</div>
+                        <div class="song-requester">Requested by TestUser123</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="profiles.js"></script>
+    <script src="profile-config.js"></script>
+    
+    <script>
+        let currentProfile = 'superhero';
+        let cycleInterval = null;
+        let fpsCounter = 0;
+        let lastTime = performance.now();
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProfileInfo();
+            startFPSCounter();
+            checkPerformance();
+        });
+        
+        function testProfile(profileName) {
+            currentProfile = profileName;
+            
+            // Update active button
+            document.querySelectorAll('.profile-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Apply profile
+            if (typeof applyProfile !== 'undefined') {
+                applyProfile(profileName);
+                updateProfileInfo();
+                updateEffectToggles();
+                updateStatus(`Applied ${profileName} profile`);
+            } else {
+                updateStatus('Error: Profile system not loaded');
+            }
+        }
+        
+        function updateProfileInfo() {
+            if (typeof getCurrentProfile === 'undefined') return;
+            
+            const profile = getCurrentProfile();
+            document.getElementById('profileName').textContent = profile.name;
+            document.getElementById('profileDesc').textContent = profile.description;
+            document.getElementById('profileFont').textContent = profile.fonts.primary;
+            
+            const enabledEffects = Object.keys(profile.effects)
+                .filter(key => profile.effects[key])
+                .join(', ');
+            document.getElementById('profileEffects').textContent = enabledEffects || 'None';
+        }
+        
+        function updateEffectToggles() {
+            if (typeof getCurrentProfile === 'undefined') return;
+            
+            const profile = getCurrentProfile();
+            document.getElementById('animationsToggle').checked = profile.effects.animations;
+            document.getElementById('glowToggle').checked = profile.effects.glow;
+            document.getElementById('bounceToggle').checked = profile.effects.bounce;
+            document.getElementById('pulseToggle').checked = profile.effects.pulse;
+            document.getElementById('shimmerToggle').checked = profile.effects.shimmer;
+            document.getElementById('sparklesToggle').checked = profile.effects.sparkles;
+        }
+        
+        function toggleEffect(effectName) {
+            const checkbox = document.getElementById(effectName + 'Toggle');
+            const root = document.documentElement;
+            root.style.setProperty(`--${effectName}-enabled`, checkbox.checked ? '1' : '0');
+            updateStatus(`${effectName} ${checkbox.checked ? 'enabled' : 'disabled'}`);
+        }
+        
+        function updateTestSong() {
+            const title = document.getElementById('songTitle').value;
+            const artist = document.getElementById('songArtist').value;
+            const requester = document.getElementById('songRequester').value;
+            
+            document.querySelector('.song-title').textContent = title;
+            document.querySelector('.song-artist').textContent = artist;
+            document.querySelector('.song-requester').textContent = `Requested by ${requester}`;
+            
+            updateStatus('Song updated');
+        }
+        
+        function loadTestSong(title, artist, requester) {
+            document.getElementById('songTitle').value = title;
+            document.getElementById('songArtist').value = artist;
+            document.getElementById('songRequester').value = requester;
+            updateTestSong();
+        }
+        
+        function randomizeTest() {
+            const profiles = ['superhero', 'minimal', 'neon', 'retro', 'elegant', 'gaming', 'music', 'chatting', 'horror', 'kawaii', 'synthwave', 'nature', 'corporate'];
+            const randomProfile = profiles[Math.floor(Math.random() * profiles.length)];
+            
+            const testSongs = [
+                ['Bohemian Rhapsody', 'Queen', 'MusicLover'],
+                ['Thunderstruck', 'AC/DC', 'RockFan99'],
+                ['Anime Thighs', 'MC Virgins', 'WeebMaster'],
+                ['Cyberpunk 2077 OST', 'Various Artists', 'GamerGirl'],
+                ['Lo-fi Hip Hop Mix', 'ChillBeats', 'StudyTime'],
+                ['Never Gonna Give You Up', 'Rick Astley', 'TestUser123'],
+                ['Megalovania', 'Toby Fox', 'UndertaleGamer'],
+                ['Giorno\'s Theme', 'Yugo Kanno', 'JoJoFan'],
+                ['BFG Division', 'Mick Gordon', 'DoomSlayer']
+            ];
+            const randomSong = testSongs[Math.floor(Math.random() * testSongs.length)];
+            
+            // Find and click the profile button
+            const profileBtn = Array.from(document.querySelectorAll('.profile-btn'))
+                .find(btn => btn.textContent.toLowerCase() === randomProfile);
+            if (profileBtn) profileBtn.click();
+            
+            loadTestSong(...randomSong);
+            updateStatus(`Randomized to ${randomProfile} profile`);
+        }
+        
+        function cycleProfiles() {
+            const profiles = ['superhero', 'minimal', 'neon', 'retro', 'elegant', 'gaming', 'music', 'chatting', 'horror', 'kawaii', 'synthwave', 'nature', 'corporate'];
+            let currentIndex = profiles.indexOf(currentProfile);
+            
+            if (cycleInterval) {
+                clearInterval(cycleInterval);
+                cycleInterval = null;
+                updateStatus('Cycle stopped');
+                return;
+            }
+            
+            cycleInterval = setInterval(() => {
+                currentIndex = (currentIndex + 1) % profiles.length;
+                const profileBtn = Array.from(document.querySelectorAll('.profile-btn'))
+                    .find(btn => btn.textContent.toLowerCase() === profiles[currentIndex]);
+                if (profileBtn) profileBtn.click();
+            }, 3000);
+            
+            updateStatus('Cycling profiles every 3 seconds');
+        }
+        
+        function exportProfile() {
+            if (typeof getCurrentProfile === 'undefined') return;
+            
+            const profile = getCurrentProfile();
+            const exportData = {
+                name: profile.name,
+                profile: profile,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${profile.name.toLowerCase()}-profile.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            updateStatus(`Exported ${profile.name} profile`);
+        }
+        
+        function resetToDefault() {
+            if (cycleInterval) {
+                clearInterval(cycleInterval);
+                cycleInterval = null;
+            }
+            
+            const superheroBtn = Array.from(document.querySelectorAll('.profile-btn'))
+                .find(btn => btn.textContent === 'Superhero');
+            if (superheroBtn) superheroBtn.click();
+            
+            loadTestSong('Never Gonna Give You Up', 'Rick Astley', 'TestUser123');
+            updateStatus('Reset to default');
+        }
+        
+        function updateStatus(message) {
+            const statusBar = document.getElementById('statusBar');
+            statusBar.textContent = `Profile: ${currentProfile} | ${message}`;
+            
+            setTimeout(() => {
+                statusBar.textContent = `Profile: ${currentProfile} | Status: Ready`;
+            }, 3000);
+        }
+        
+        function startFPSCounter() {
+            function updateFPS() {
+                const now = performance.now();
+                const delta = now - lastTime;
+                lastTime = now;
+                
+                const fps = Math.round(1000 / delta);
+                document.getElementById('fpsCounter').textContent = `FPS: ${fps}`;
+                
+                if (fps < 30) {
+                    document.getElementById('performanceWarning').style.display = 'block';
+                } else {
+                    document.getElementById('performanceWarning').style.display = 'none';
+                }
+                
+                requestAnimationFrame(updateFPS);
+            }
+            updateFPS();
+        }
+        
+        function checkPerformance() {
+            // Simple performance check
+            const start = performance.now();
+            for (let i = 0; i < 100000; i++) {
+                Math.random();
+            }
+            const end = performance.now();
+            
+            if (end - start > 10) {
+                document.getElementById('performanceWarning').style.display = 'block';
+            }
+        }
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key >= '1' && e.key <= '9') {
+                const profiles = ['superhero', 'minimal', 'neon', 'retro', 'elegant', 'gaming', 'music', 'chatting', 'horror'];
+                const index = parseInt(e.key) - 1;
+                if (profiles[index]) {
+                    const profileBtn = Array.from(document.querySelectorAll('.profile-btn'))
+                        .find(btn => btn.textContent.toLowerCase() === profiles[index]);
+                    if (profileBtn) profileBtn.click();
+                }
+            } else if (e.key === 'r') {
+                randomizeTest();
+            } else if (e.key === 'c') {
+                cycleProfiles();
+            } else if (e.key === 'Escape') {
+                resetToDefault();
+            }
+        });
+    </script>
+</body>
+</html>

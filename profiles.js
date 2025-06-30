@@ -220,6 +220,350 @@ const profiles = {
             patterns: false,
             animation: false
         }
+    },
+
+    gaming: {
+        name: "Gaming",
+        description: "High-energy design perfect for gaming streams with bold colors",
+        fonts: {
+            primary: "'Orbitron', 'Arial', sans-serif",
+            secondary: "'Exo 2', sans-serif",
+            accent: "'Rajdhani', sans-serif"
+        },
+        colors: {
+            primary: "#FFFFFF",
+            secondary: "#00FF41",
+            accent: "#FF0080",
+            background: "rgba(0, 0, 0, 0.85)",
+            titleColor: "#00FF41",
+            artistColor: "#FF0080",
+            requesterColor: "#00BFFF",
+            positionColor: "#FFD700"
+        },
+        effects: {
+            animations: true,
+            flipBoard: true,
+            glow: true,
+            bounce: true,
+            pulse: true,
+            shimmer: false,
+            sparkles: true
+        },
+        layout: {
+            titleSize: "58px",
+            artistSize: "44px",
+            requesterSize: "34px",
+            positionSize: "42px",
+            spacing: "gaming",
+            borders: true,
+            shadows: true
+        },
+        background: {
+            gradients: true,
+            patterns: true,
+            animation: true
+        }
+    },
+
+    music: {
+        name: "Music",
+        description: "Smooth and rhythmic design ideal for music and DJ streams",
+        fonts: {
+            primary: "'Montserrat', sans-serif",
+            secondary: "'Open Sans', sans-serif",
+            accent: "'Dancing Script', cursive"
+        },
+        colors: {
+            primary: "#F8F8FF",
+            secondary: "#9370DB",
+            accent: "#FF69B4",
+            background: "rgba(25, 25, 112, 0.8)",
+            titleColor: "#F8F8FF",
+            artistColor: "#9370DB",
+            requesterColor: "#FF69B4",
+            positionColor: "#FFD700"
+        },
+        effects: {
+            animations: true,
+            flipBoard: false,
+            glow: true,
+            bounce: false,
+            pulse: true,
+            shimmer: true,
+            sparkles: false
+        },
+        layout: {
+            titleSize: "54px",
+            artistSize: "42px",
+            requesterSize: "32px",
+            positionSize: "38px",
+            spacing: "music",
+            borders: false,
+            shadows: true
+        },
+        background: {
+            gradients: true,
+            patterns: false,
+            animation: true
+        }
+    },
+
+    chatting: {
+        name: "Just Chatting",
+        description: "Comfortable and readable design for talk shows and casual streams",
+        fonts: {
+            primary: "'Lato', sans-serif",
+            secondary: "'Source Sans Pro', sans-serif",
+            accent: "'Merriweather', serif"
+        },
+        colors: {
+            primary: "#2C3E50",
+            secondary: "#3498DB",
+            accent: "#E74C3C",
+            background: "rgba(236, 240, 241, 0.95)",
+            titleColor: "#2C3E50",
+            artistColor: "#3498DB",
+            requesterColor: "#E74C3C",
+            positionColor: "#F39C12"
+        },
+        effects: {
+            animations: true,
+            flipBoard: false,
+            glow: false,
+            bounce: false,
+            pulse: true,
+            shimmer: false,
+            sparkles: false
+        },
+        layout: {
+            titleSize: "48px",
+            artistSize: "36px",
+            requesterSize: "28px",
+            positionSize: "34px",
+            spacing: "comfortable",
+            borders: true,
+            shadows: false
+        },
+        background: {
+            gradients: false,
+            patterns: false,
+            animation: false
+        }
+    },
+
+    horror: {
+        name: "Horror",
+        description: "Dark and spooky design perfect for horror games and scary content",
+        fonts: {
+            primary: "'Creepster', cursive",
+            secondary: "'Nosifer', cursive",
+            accent: "'Butcherman', cursive"
+        },
+        colors: {
+            primary: "#FF0000",
+            secondary: "#8B0000",
+            accent: "#DC143C",
+            background: "rgba(0, 0, 0, 0.95)",
+            titleColor: "#FF0000",
+            artistColor: "#8B0000",
+            requesterColor: "#DC143C",
+            positionColor: "#FF4500"
+        },
+        effects: {
+            animations: true,
+            flipBoard: true,
+            glow: true,
+            bounce: false,
+            pulse: true,
+            shimmer: true,
+            sparkles: false
+        },
+        layout: {
+            titleSize: "56px",
+            artistSize: "42px",
+            requesterSize: "32px",
+            positionSize: "40px",
+            spacing: "horror",
+            borders: true,
+            shadows: true
+        },
+        background: {
+            gradients: true,
+            patterns: true,
+            animation: true
+        }
+    },
+
+    kawaii: {
+        name: "Kawaii",
+        description: "Cute and colorful design perfect for anime, art, and kawaii content",
+        fonts: {
+            primary: "'Quicksand', sans-serif",
+            secondary: "'Comfortaa', cursive",
+            accent: "'Kalam', cursive"
+        },
+        colors: {
+            primary: "#FF69B4",
+            secondary: "#FFB6C1",
+            accent: "#FF1493",
+            background: "rgba(255, 240, 245, 0.9)",
+            titleColor: "#FF69B4",
+            artistColor: "#9370DB",
+            requesterColor: "#FF1493",
+            positionColor: "#FFD700"
+        },
+        effects: {
+            animations: true,
+            flipBoard: false,
+            glow: true,
+            bounce: true,
+            pulse: true,
+            shimmer: true,
+            sparkles: true
+        },
+        layout: {
+            titleSize: "52px",
+            artistSize: "40px",
+            requesterSize: "30px",
+            positionSize: "36px",
+            spacing: "kawaii",
+            borders: true,
+            shadows: true
+        },
+        background: {
+            gradients: true,
+            patterns: true,
+            animation: true
+        }
+    },
+
+    corporate: {
+        name: "Corporate",
+        description: "Professional and clean design for business streams and presentations",
+        fonts: {
+            primary: "'Inter', sans-serif",
+            secondary: "'Roboto', sans-serif",
+            accent: "'Source Sans Pro', sans-serif"
+        },
+        colors: {
+            primary: "#2C3E50",
+            secondary: "#34495E",
+            accent: "#3498DB",
+            background: "rgba(255, 255, 255, 0.95)",
+            titleColor: "#2C3E50",
+            artistColor: "#34495E",
+            requesterColor: "#3498DB",
+            positionColor: "#E67E22"
+        },
+        effects: {
+            animations: false,
+            flipBoard: false,
+            glow: false,
+            bounce: false,
+            pulse: false,
+            shimmer: false,
+            sparkles: false
+        },
+        layout: {
+            titleSize: "46px",
+            artistSize: "34px",
+            requesterSize: "26px",
+            positionSize: "32px",
+            spacing: "corporate",
+            borders: true,
+            shadows: false
+        },
+        background: {
+            gradients: false,
+            patterns: false,
+            animation: false
+        }
+    },
+
+    synthwave: {
+        name: "Synthwave",
+        description: "80s synthwave aesthetic with neon grids and retro-futuristic vibes",
+        fonts: {
+            primary: "'Orbitron', monospace",
+            secondary: "'Electrolize', sans-serif",
+            accent: "'Audiowide', cursive"
+        },
+        colors: {
+            primary: "#FF00FF",
+            secondary: "#00FFFF",
+            accent: "#FFFF00",
+            background: "rgba(16, 0, 32, 0.9)",
+            titleColor: "#FF00FF",
+            artistColor: "#00FFFF",
+            requesterColor: "#FFFF00",
+            positionColor: "#FF0080"
+        },
+        effects: {
+            animations: true,
+            flipBoard: false,
+            glow: true,
+            bounce: false,
+            pulse: true,
+            shimmer: true,
+            sparkles: false
+        },
+        layout: {
+            titleSize: "54px",
+            artistSize: "40px",
+            requesterSize: "30px",
+            positionSize: "38px",
+            spacing: "synthwave",
+            borders: true,
+            shadows: true
+        },
+        background: {
+            gradients: true,
+            patterns: true,
+            animation: true
+        }
+    },
+
+    nature: {
+        name: "Nature",
+        description: "Earthy and organic design perfect for outdoor and nature content",
+        fonts: {
+            primary: "'Merriweather', serif",
+            secondary: "'Lora', serif",
+            accent: "'Amatic SC', cursive"
+        },
+        colors: {
+            primary: "#2E8B57",
+            secondary: "#228B22",
+            accent: "#8FBC8F",
+            background: "rgba(245, 245, 220, 0.9)",
+            titleColor: "#2E8B57",
+            artistColor: "#228B22",
+            requesterColor: "#CD853F",
+            positionColor: "#DAA520"
+        },
+        effects: {
+            animations: true,
+            flipBoard: false,
+            glow: false,
+            bounce: false,
+            pulse: true,
+            shimmer: false,
+            sparkles: false
+        },
+        layout: {
+            titleSize: "50px",
+            artistSize: "38px",
+            requesterSize: "28px",
+            positionSize: "34px",
+            spacing: "nature",
+            borders: false,
+            shadows: true
+        },
+        background: {
+            gradients: true,
+            patterns: false,
+            animation: false
+        }
     }
 };
 
@@ -346,7 +690,23 @@ function loadGoogleFont(fontFamily) {
         'Playfair Display': 'Playfair+Display:wght@400;700',
         'Source Sans Pro': 'Source+Sans+Pro:wght@400;600',
         'Crimson Text': 'Crimson+Text:wght@400;600',
-        'Roboto': 'Roboto:wght@400;500'
+        'Roboto': 'Roboto:wght@400;500',
+        'Rajdhani': 'Rajdhani:wght@400;500;600',
+        'Montserrat': 'Montserrat:wght@400;500;600',
+        'Open Sans': 'Open+Sans:wght@400;600',
+        'Dancing Script': 'Dancing+Script:wght@400;700',
+        'Lato': 'Lato:wght@400;700',
+        'Merriweather': 'Merriweather:wght@400;700',
+        'Creepster': 'Creepster',
+        'Nosifer': 'Nosifer',
+        'Butcherman': 'Butcherman',
+        'Quicksand': 'Quicksand:wght@400;500;600',
+        'Comfortaa': 'Comfortaa:wght@400;700',
+        'Kalam': 'Kalam:wght@400;700',
+        'Inter': 'Inter:wght@400;500;600',
+        'Electrolize': 'Electrolize',
+        'Lora': 'Lora:wght@400;700',
+        'Amatic SC': 'Amatic+SC:wght@400;700'
     };
     
     const googleFontName = fontMap[fontFamily];

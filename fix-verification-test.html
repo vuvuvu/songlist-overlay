@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Fix Verification Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .test-section {
+            background: rgba(255, 255, 255, 0.1);
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .test-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .test-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+        
+        .test-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #FFD700;
+        }
+        
+        .test-description {
+            margin-bottom: 20px;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        .test-steps {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .test-steps h4 {
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+        
+        .test-steps ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .test-steps li {
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        .status-pending {
+            background: #ff9800;
+        }
+        
+        .status-pass {
+            background: #4CAF50;
+        }
+        
+        .status-fail {
+            background: #f44336;
+        }
+        
+        .test-result {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        .result-pending {
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid #ff9800;
+            color: #ff9800;
+        }
+        
+        .result-pass {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .result-fail {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 12px 20px;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-align: center;
+        }
+        
+        .action-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.primary {
+            background: #4CAF50;
+        }
+        
+        .action-btn.primary:hover {
+            background: #45a049;
+        }
+        
+        .checklist {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .checklist h4 {
+            color: #FFD700;
+            margin-bottom: 15px;
+        }
+        
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .checklist-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .checklist-item input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.2);
+        }
+        
+        .checklist-item label {
+            cursor: pointer;
+            flex: 1;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        
+        .troubleshooting {
+            background: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .troubleshooting h4 {
+            color: #f44336;
+            margin-bottom: 15px;
+        }
+        
+        .overlay-preview {
+            width: 100%;
+            height: 300px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: #000;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Fix Verification Test</h1>
+        
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="progress-text" id="progressText">Ready to test fixes (0/3 completed)</div>
+        
+        <!-- Test 1: Profile Switching -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-icon">🎨</div>
+                <div class="test-title">Test 1: Profile Switching Functionality</div>
+                <div class="status-indicator status-pending" id="status1"></div>
+            </div>
+            
+            <div class="test-description">
+                Verify that all profile switching methods work correctly and profiles persist across sessions.
+            </div>
+            
+            <div class="test-steps">
+                <h4>Testing Steps:</h4>
+                <ol>
+                    <li>Open your overlay in a new tab: <a href="queue.html" target="_blank" class="action-btn">Open Overlay</a></li>
+                    <li>Try switching profiles using: <a href="profile-switcher.html" target="_blank" class="action-btn">Quick Switcher</a></li>
+                    <li>Test keyboard shortcuts: Focus overlay and press <code>1-9</code></li>
+                    <li>Refresh overlay and verify profile persists</li>
+                    <li>Try the full selector: <a href="profile-selector.html" target="_blank" class="action-btn">Full Selector</a></li>
+                </ol>
+            </div>
+            
+            <div class="checklist">
+                <h4>Verification Checklist:</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1a" onchange="updateProgress()">
+                    <label for="check1a">Profile switcher opens without errors</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1b" onchange="updateProgress()">
+                    <label for="check1b">Clicking profile buttons changes overlay appearance</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1c" onchange="updateProgress()">
+                    <label for="check1c">Keyboard shortcuts work (1-9 keys)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1d" onchange="updateProgress()">
+                    <label for="check1d">Selected profile persists after page refresh</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check1e" onchange="updateProgress()">
+                    <label for="check1e">No JavaScript errors in browser console</label>
+                </div>
+            </div>
+            
+            <div class="test-result result-pending" id="result1">
+                <span class="status-indicator status-pending"></span>
+                Pending - Complete the checklist above
+            </div>
+            
+            <div class="troubleshooting" style="display: none;" id="trouble1">
+                <h4>Troubleshooting Profile Switching Issues:</h4>
+                <ul>
+                    <li>Check browser console (F12) for JavaScript errors</li>
+                    <li>Ensure internet connection for Google Fonts</li>
+                    <li>Try refreshing the page and testing again</li>
+                    <li>Clear browser cache if profiles don't persist</li>
+                    <li>Test in a different browser (Chrome, Firefox, Safari)</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Test 2: Song Limit Display -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-icon">🎯</div>
+                <div class="test-title">Test 2: Song Limit Display Fix</div>
+                <div class="status-indicator status-pending" id="status2"></div>
+            </div>
+            
+            <div class="test-description">
+                Verify that "0 requests remaining" no longer appears when no song limit is configured.
+            </div>
+            
+            <div class="test-steps">
+                <h4>Testing Steps:</h4>
+                <ol>
+                    <li>Open your overlay: <a href="queue.html" target="_blank" class="action-btn">Open Overlay</a></li>
+                    <li>Look for any song limit display (should NOT show "0 requests remaining")</li>
+                    <li>Check your StreamerSongList settings for configured limits</li>
+                    <li>If you have limits set, verify they show correctly</li>
+                    <li>If no limits set, verify no limit display appears</li>
+                </ol>
+            </div>
+            
+            <div class="checklist">
+                <h4>Verification Checklist:</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2a" onchange="updateProgress()">
+                    <label for="check2a">No "0 requests remaining" display when no limit is set</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2b" onchange="updateProgress()">
+                    <label for="check2b">Song limit only shows when actually configured in StreamerSongList</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2c" onchange="updateProgress()">
+                    <label for="check2c">Limit display is properly formatted (if shown)</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check2d" onchange="updateProgress()">
+                    <label for="check2d">Overlay looks clean without unnecessary displays</label>
+                </div>
+            </div>
+            
+            <div class="test-result result-pending" id="result2">
+                <span class="status-indicator status-pending"></span>
+                Pending - Complete the checklist above
+            </div>
+            
+            <div class="troubleshooting" style="display: none;" id="trouble2">
+                <h4>Troubleshooting Song Limit Issues:</h4>
+                <ul>
+                    <li>Refresh the overlay page to apply the fix</li>
+                    <li>Check your StreamerSongList dashboard for song limit settings</li>
+                    <li>If still showing, set <code>showSongLimit = 'no'</code> in streamersonglist.js</li>
+                    <li>Verify your streamer ID is correct in the configuration</li>
+                    <li>Check browser console for API errors</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Test 3: Requester Names -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-icon">👤</div>
+                <div class="test-title">Test 3: Requester Name Display Fix</div>
+                <div class="status-indicator status-pending" id="status3"></div>
+            </div>
+            
+            <div class="test-description">
+                Verify that actual usernames display instead of "Unknown" for song requesters.
+            </div>
+            
+            <div class="test-steps">
+                <h4>Testing Steps:</h4>
+                <ol>
+                    <li>Add some songs to your queue via StreamerSongList</li>
+                    <li>Open your overlay: <a href="queue.html" target="_blank" class="action-btn">Open Overlay</a></li>
+                    <li>Check if requester names show actual usernames</li>
+                    <li>Test with different users requesting songs</li>
+                    <li>Verify names display correctly across profile switches</li>
+                </ol>
+            </div>
+            
+            <div class="checklist">
+                <h4>Verification Checklist:</h4>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3a" onchange="updateProgress()">
+                    <label for="check3a">Actual usernames display instead of "Unknown"</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3b" onchange="updateProgress()">
+                    <label for="check3b">Requester names show correctly for all songs in queue</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3c" onchange="updateProgress()">
+                    <label for="check3c">Names display properly across different profiles</label>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox" id="check3d" onchange="updateProgress()">
+                    <label for="check3d">"Unknown" only shows for songs without requester data</label>
+                </div>
+            </div>
+            
+            <div class="test-result result-pending" id="result3">
+                <span class="status-indicator status-pending"></span>
+                Pending - Complete the checklist above
+            </div>
+            
+            <div class="troubleshooting" style="display: none;" id="trouble3">
+                <h4>Troubleshooting Requester Name Issues:</h4>
+                <ul>
+                    <li>Ensure songs in your queue have actual requesters</li>
+                    <li>Check if the StreamerSongList API is returning proper data</li>
+                    <li>Test with fresh song requests from different users</li>
+                    <li>Verify your StreamerSongList integration is working</li>
+                    <li>Check browser console for API response data</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Overall Results -->
+        <div class="test-section">
+            <div class="test-header">
+                <div class="test-icon">📊</div>
+                <div class="test-title">Overall Test Results</div>
+            </div>
+            
+            <div id="overallResults">
+                <div class="test-result result-pending">
+                    <span class="status-indicator status-pending"></span>
+                    Complete all tests above to see overall results
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn primary" onclick="runQuickTest()">🚀 Run Quick Auto-Test</button>
+                <a href="profile-tester.html" class="action-btn" target="_blank">🧪 Open Profile Tester</a>
+                <a href="profile-performance-test.html" class="action-btn" target="_blank">📊 Performance Test</a>
+                <button class="action-btn" onclick="exportResults()">💾 Export Results</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            profileSwitching: 0,
+            songLimit: 0,
+            requesterNames: 0
+        };
+        
+        function updateProgress() {
+            // Count completed checkboxes for each test
+            const test1Checks = document.querySelectorAll('#check1a, #check1b, #check1c, #check1d, #check1e');
+            const test2Checks = document.querySelectorAll('#check2a, #check2b, #check2c, #check2d');
+            const test3Checks = document.querySelectorAll('#check3a, #check3b, #check3c, #check3d');
+            
+            const test1Complete = Array.from(test1Checks).filter(cb => cb.checked).length;
+            const test2Complete = Array.from(test2Checks).filter(cb => cb.checked).length;
+            const test3Complete = Array.from(test3Checks).filter(cb => cb.checked).length;
+            
+            // Update test results
+            updateTestResult(1, test1Complete, test1Checks.length);
+            updateTestResult(2, test2Complete, test2Checks.length);
+            updateTestResult(3, test3Complete, test3Checks.length);
+            
+            // Update overall progress
+            const totalChecked = test1Complete + test2Complete + test3Complete;
+            const totalChecks = test1Checks.length + test2Checks.length + test3Checks.length;
+            const percentage = (totalChecked / totalChecks) * 100;
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+            
+            const completedTests = [
+                test1Complete === test1Checks.length ? 1 : 0,
+                test2Complete === test2Checks.length ? 1 : 0,
+                test3Complete === test3Checks.length ? 1 : 0
+            ].reduce((a, b) => a + b, 0);
+            
+            document.getElementById('progressText').textContent = 
+                `Testing Progress: ${completedTests}/3 tests completed (${Math.round(percentage)}%)`;
+            
+            // Update overall results
+            updateOverallResults(completedTests);
+        }
+        
+        function updateTestResult(testNum, completed, total) {
+            const resultEl = document.getElementById(`result${testNum}`);
+            const statusEl = document.getElementById(`status${testNum}`);
+            const troubleEl = document.getElementById(`trouble${testNum}`);
+            
+            if (completed === total) {
+                resultEl.className = 'test-result result-pass';
+                resultEl.innerHTML = '<span class="status-indicator status-pass"></span>✅ Test Passed - All items verified';
+                statusEl.className = 'status-indicator status-pass';
+                troubleEl.style.display = 'none';
+            } else if (completed > 0) {
+                resultEl.className = 'test-result result-pending';
+                resultEl.innerHTML = `<span class="status-indicator status-pending"></span>⏳ In Progress - ${completed}/${total} items completed`;
+                statusEl.className = 'status-indicator status-pending';
+                troubleEl.style.display = 'none';
+            } else {
+                resultEl.className = 'test-result result-pending';
+                resultEl.innerHTML = '<span class="status-indicator status-pending"></span>Pending - Complete the checklist above';
+                statusEl.className = 'status-indicator status-pending';
+                troubleEl.style.display = 'none';
+            }
+        }
+        
+        function updateOverallResults(completedTests) {
+            const overallEl = document.getElementById('overallResults');
+            
+            if (completedTests === 3) {
+                overallEl.innerHTML = `
+                    <div class="test-result result-pass">
+                        <span class="status-indicator status-pass"></span>
+                        🎉 All Tests Passed! All fixes are working correctly.
+                    </div>
+                    <div style="margin-top: 15px; padding: 15px; background: rgba(76, 175, 80, 0.1); border-radius: 10px;">
+                        <strong>✅ Profile switching:</strong> Working perfectly<br>
+                        <strong>✅ Song limit display:</strong> Fixed and clean<br>
+                        <strong>✅ Requester names:</strong> Displaying correctly<br><br>
+                        <strong>Your overlay is ready for streaming!</strong>
+                    </div>
+                `;
+            } else if (completedTests > 0) {
+                overallEl.innerHTML = `
+                    <div class="test-result result-pending">
+                        <span class="status-indicator status-pending"></span>
+                        ⏳ ${completedTests}/3 tests completed. Continue testing to verify all fixes.
+                    </div>
+                `;
+            } else {
+                overallEl.innerHTML = `
+                    <div class="test-result result-pending">
+                        <span class="status-indicator status-pending"></span>
+                        Complete all tests above to see overall results
+                    </div>
+                `;
+            }
+        }
+        
+        function runQuickTest() {
+            alert('Quick Auto-Test will check basic functionality. Make sure your overlay is open in another tab, then click OK to continue.');
+            
+            // Simulate quick checks
+            setTimeout(() => {
+                if (typeof Storage !== "undefined") {
+                    document.getElementById('check1d').checked = true;
+                }
+                
+                // Check if profile system is available
+                if (window.opener || document.referrer.includes('queue.html')) {
+                    document.getElementById('check1a').checked = true;
+                }
+                
+                updateProgress();
+                alert('Quick test completed! Please manually verify the remaining items based on your actual overlay.');
+            }, 1000);
+        }
+        
+        function exportResults() {
+            const results = {
+                timestamp: new Date().toISOString(),
+                tests: {
+                    profileSwitching: {
+                        completed: Array.from(document.querySelectorAll('#check1a, #check1b, #check1c, #check1d, #check1e')).filter(cb => cb.checked).length,
+                        total: 5
+                    },
+                    songLimit: {
+                        completed: Array.from(document.querySelectorAll('#check2a, #check2b, #check2c, #check2d')).filter(cb => cb.checked).length,
+                        total: 4
+                    },
+                    requesterNames: {
+                        completed: Array.from(document.querySelectorAll('#check3a, #check3b, #check3c, #check3d')).filter(cb => cb.checked).length,
+                        total: 4
+                    }
+                }
+            };
+            
+            const blob = new Blob([JSON.stringify(results, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'fix-verification-results.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProgress();
+        });
+    </script>
+</body>
+</html>

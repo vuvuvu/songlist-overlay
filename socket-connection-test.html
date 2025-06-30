@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Socket Connection Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #4CAF50;
+            margin-bottom: 30px;
+        }
+        
+        .status {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+        
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 2px solid #f44336;
+            color: #f44336;
+        }
+        
+        .status.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 2px solid #2196F3;
+            color: #2196F3;
+        }
+        
+        .log {
+            background: #2d2d2d;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: monospace;
+            font-size: 14px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .connection-indicator {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        .connected {
+            background: #4CAF50;
+            box-shadow: 0 0 10px #4CAF50;
+        }
+        
+        .disconnected {
+            background: #f44336;
+        }
+        
+        .connecting {
+            background: #ff9800;
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .test-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 10px;
+        }
+        
+        .test-btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔌 Socket.IO Connection Test</h1>
+        
+        <div id="status" class="status info">
+            <span class="connection-indicator connecting"></span>
+            Testing Socket.IO connection...
+        </div>
+        
+        <button class="test-btn" onclick="testConnection()">🔄 Test Again</button>
+        <button class="test-btn" onclick="window.open('queue.html', '_blank')">🎯 Open Main Overlay</button>
+        
+        <div class="log" id="log">
+            <div>Starting connection test...</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    
+    <script>
+        let testSocket = null;
+        let logEl = document.getElementById('log');
+        let statusEl = document.getElementById('status');
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const colors = {
+                success: '#4CAF50',
+                error: '#f44336',
+                info: '#2196F3',
+                warning: '#ff9800'
+            };
+            
+            logEl.innerHTML += `<div style="color: ${colors[type] || '#fff'}">[${timestamp}] ${message}</div>`;
+            logEl.scrollTop = logEl.scrollHeight;
+            console.log(message);
+        }
+        
+        function updateStatus(message, type, indicator = 'disconnected') {
+            statusEl.innerHTML = `
+                <span class="connection-indicator ${indicator}"></span>
+                ${message}
+            `;
+            statusEl.className = `status ${type}`;
+        }
+        
+        function testConnection() {
+            // Clear previous logs
+            logEl.innerHTML = '<div>Starting new connection test...</div>';
+            
+            updateStatus('Testing connection...', 'info', 'connecting');
+            log('🔍 Testing Socket.IO v4.7.5 connection to StreamerSongList', 'info');
+            
+            // Check if Socket.IO loaded
+            if (typeof io === 'undefined') {
+                log('❌ Socket.IO library not loaded!', 'error');
+                updateStatus('Socket.IO library failed to load', 'error', 'disconnected');
+                return;
+            }
+            
+            log('✅ Socket.IO library loaded successfully', 'success');
+            
+            // Clean up existing socket
+            if (testSocket) {
+                testSocket.disconnect();
+                testSocket = null;
+            }
+            
+            try {
+                log('🔌 Attempting connection with v4.x client to v2.x server...', 'info');
+                
+                testSocket = io("https://api.streamersonglist.com", {
+                    transports: ['polling', 'websocket'],
+                    upgrade: true,
+                    rememberUpgrade: false,
+                    timeout: 20000,
+                    forceNew: true,
+                    autoConnect: true,
+                    reconnection: true,
+                    reconnectionDelay: 1000,
+                    reconnectionDelayMax: 5000,
+                    reconnectionAttempts: 10,
+                    randomizationFactor: 0.5
+                });
+                
+                let connectionTimeout = setTimeout(() => {
+                    log('❌ Connection timeout after 20 seconds', 'error');
+                    updateStatus('Connection timeout', 'error', 'disconnected');
+                }, 20000);
+                
+                testSocket.on("connect", () => {
+                    clearTimeout(connectionTimeout);
+                    log('🎉 Successfully connected to StreamerSongList WebSocket!', 'success');
+                    updateStatus('Connected successfully!', 'success', 'connected');
+                    
+                    // Test joining room
+                    testSocket.emit("join-room", "287");
+                    log('🏠 Joined room: 287', 'success');
+                    
+                    log('✅ Connection test PASSED - WebSocket is working!', 'success');
+                });
+                
+                testSocket.on("connect_error", (error) => {
+                    clearTimeout(connectionTimeout);
+                    log(`❌ Connection error: ${error.message}`, 'error');
+                    log(`Error type: ${error.type}`, 'error');
+                    updateStatus('Connection failed', 'error', 'disconnected');
+                    
+                    if (error.message.includes('v2.x with a v3.x client')) {
+                        log('🔧 Version compatibility issue detected', 'warning');
+                        log('💡 This is expected - the connection config should handle it', 'info');
+                    }
+                });
+                
+                testSocket.on("disconnect", (reason) => {
+                    log(`🔌 Disconnected: ${reason}`, 'warning');
+                    updateStatus('Disconnected', 'info', 'disconnected');
+                });
+                
+                testSocket.on("reconnect", (attemptNumber) => {
+                    log(`🔄 Reconnected (attempt ${attemptNumber})`, 'success');
+                    updateStatus('Reconnected', 'success', 'connected');
+                });
+                
+                testSocket.on("reconnect_error", (error) => {
+                    log(`❌ Reconnection failed: ${error.message}`, 'error');
+                });
+                
+                testSocket.on("reconnect_failed", () => {
+                    log('❌ All reconnection attempts failed', 'error');
+                    updateStatus('All reconnection attempts failed', 'error', 'disconnected');
+                });
+                
+            } catch (error) {
+                log(`❌ Setup error: ${error.message}`, 'error');
+                updateStatus('Setup failed', 'error', 'disconnected');
+            }
+        }
+        
+        // Auto-start test
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(testConnection, 1000);
+        });
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            if (testSocket) {
+                testSocket.disconnect();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>StreamerSongList API Debug Tool</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #1a1a1a;
+            color: white;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            background: #2d2d2d;
+            margin-bottom: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        
+        .section h2 {
+            color: #FFD700;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .control-group label {
+            color: #ccc;
+            font-size: 0.9em;
+        }
+        
+        input, button {
+            padding: 8px 12px;
+            background: #3a3a3a;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        
+        button {
+            background: #4CAF50;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button.secondary {
+            background: #2196F3;
+        }
+        
+        button.secondary:hover {
+            background: #1976D2;
+        }
+        
+        .output {
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            font-size: 0.9em;
+        }
+        
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .status.success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid #4CAF50;
+            color: #4CAF50;
+        }
+        
+        .status.error {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid #f44336;
+            color: #f44336;
+        }
+        
+        .status.info {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid #2196F3;
+            color: #2196F3;
+        }
+        
+        .highlight {
+            background: #444;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #FFD700;
+        }
+        
+        .song-preview {
+            background: #2a2a2a;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .song-preview h4 {
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .requester-analysis {
+            background: #3a2a2a;
+            border: 1px solid #665;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: #3a3a3a;
+            border: 1px solid #555;
+            border-radius: 5px 5px 0 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .tab.active {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 StreamerSongList API Debug Tool</h1>
+        
+        <div class="section">
+            <h2>Configuration</h2>
+            <div class="controls">
+                <div class="control-group">
+                    <label>Streamer Name:</label>
+                    <input type="text" id="streamerName" placeholder="Enter your Twitch name" value="belleune">
+                </div>
+                <div class="control-group">
+                    <label>Streamer ID:</label>
+                    <input type="number" id="streamerId" placeholder="Enter your streamer ID" value="287">
+                </div>
+                <div class="control-group">
+                    <label>Actions:</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button onclick="fetchQueueData()">🔍 Fetch Queue Data</button>
+                        <button class="secondary" onclick="analyzeRequesters()">👤 Analyze Requesters</button>
+                        <button class="secondary" onclick="testFix()">🧪 Test Fix</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('raw')">Raw API Data</div>
+            <div class="tab" onclick="switchTab('analysis')">Requester Analysis</div>
+            <div class="tab" onclick="switchTab('fix')">Fix Testing</div>
+        </div>
+        
+        <div class="section">
+            <div id="status"></div>
+            
+            <div id="tab-raw" class="tab-content active">
+                <h2>Raw API Response</h2>
+                <div id="rawOutput" class="output">Click "Fetch Queue Data" to see the raw API response...</div>
+            </div>
+            
+            <div id="tab-analysis" class="tab-content">
+                <h2>Requester Data Analysis</h2>
+                <div id="analysisOutput" class="output">Click "Analyze Requesters" to see detailed analysis...</div>
+            </div>
+            
+            <div id="tab-fix" class="tab-content">
+                <h2>Fix Testing</h2>
+                <div id="fixOutput" class="output">Click "Test Fix" to test the requester name detection...</div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Instructions</h2>
+            <ol>
+                <li>Enter your <span class="highlight">Streamer Name</span> and <span class="highlight">Streamer ID</span> above</li>
+                <li>Make sure you have some songs in your queue on StreamerSongList</li>
+                <li>Click <span class="highlight">"Fetch Queue Data"</span> to see the raw API response</li>
+                <li>Click <span class="highlight">"Analyze Requesters"</span> to see how requester data is structured</li>
+                <li>Click <span class="highlight">"Test Fix"</span> to test the improved requester detection</li>
+                <li>Use this information to fix the "Unknown" requester issue</li>
+            </ol>
+        </div>
+    </div>
+
+    <script src="lib/jquery-3.2.1.min.js"></script>
+    <script>
+        let currentData = null;
+        
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Show selected tab
+            document.querySelector(`[onclick="switchTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+        }
+        
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function fetchQueueData() {
+            const streamerName = document.getElementById('streamerName').value;
+            if (!streamerName) {
+                showStatus('Please enter your streamer name', 'error');
+                return;
+            }
+            
+            showStatus('Fetching queue data...', 'info');
+            
+            const apiUrl = `https://api.streamersonglist.com/v1/streamers/${streamerName}/queue`;
+            
+            $.ajax({
+                url: apiUrl,
+                method: 'GET',
+                success: function(data) {
+                    currentData = data;
+                    displayRawData(data);
+                    showStatus(`✅ Successfully fetched data for ${streamerName}`, 'success');
+                },
+                error: function(xhr, status, error) {
+                    showStatus(`❌ Error fetching data: ${error}`, 'error');
+                    console.error('API Error:', xhr, status, error);
+                }
+            });
+        }
+        
+        function displayRawData(data) {
+            const output = document.getElementById('rawOutput');
+            output.textContent = JSON.stringify(data, null, 2);
+            
+            // Switch to raw tab
+            switchTab('raw');
+        }
+        
+        function analyzeRequesters() {
+            if (!currentData) {
+                showStatus('Please fetch queue data first', 'error');
+                return;
+            }
+            
+            const output = document.getElementById('analysisOutput');
+            let analysis = 'REQUESTER DATA ANALYSIS\n';
+            analysis += '='.repeat(50) + '\n\n';
+            
+            if (!currentData.list || currentData.list.length === 0) {
+                analysis += '❌ No songs in queue to analyze\n';
+                analysis += 'Add some songs to your queue and try again.\n';
+                output.textContent = analysis;
+                switchTab('analysis');
+                return;
+            }
+            
+            analysis += `Found ${currentData.list.length} songs in queue:\n\n`;
+            
+            currentData.list.forEach((song, index) => {
+                analysis += `Song ${index + 1}: "${song.title}" by ${song.artist}\n`;
+                analysis += '-'.repeat(40) + '\n';
+                
+                // Check all possible requester fields
+                const possibleFields = [
+                    'requests',
+                    'requester', 
+                    'requestedBy',
+                    'user',
+                    'username',
+                    'displayName',
+                    'name'
+                ];
+                
+                let foundRequester = false;
+                
+                possibleFields.forEach(field => {
+                    if (song[field] !== undefined) {
+                        analysis += `✓ ${field}: ${JSON.stringify(song[field])}\n`;
+                        foundRequester = true;
+                    }
+                });
+                
+                // Special handling for requests array
+                if (song.requests && Array.isArray(song.requests)) {
+                    analysis += `✓ requests array (${song.requests.length} items):\n`;
+                    song.requests.forEach((req, reqIndex) => {
+                        analysis += `  [${reqIndex}]: ${JSON.stringify(req)}\n`;
+                    });
+                }
+                
+                if (!foundRequester) {
+                    analysis += '❌ No requester fields found\n';
+                }
+                
+                analysis += '\n';
+            });
+            
+            // Provide recommendations
+            analysis += '\nRECOMMENDATIONS:\n';
+            analysis += '='.repeat(20) + '\n';
+            
+            const firstSong = currentData.list[0];
+            if (firstSong.requests && firstSong.requests.length > 0) {
+                const req = firstSong.requests[0];
+                const availableFields = Object.keys(req);
+                analysis += `✅ Use requests[0] with fields: ${availableFields.join(', ')}\n`;
+            } else if (firstSong.requester) {
+                analysis += `✅ Use 'requester' field\n`;
+            } else if (firstSong.requestedBy) {
+                analysis += `✅ Use 'requestedBy' field\n`;
+            } else {
+                analysis += `❌ No clear requester field found - may need API documentation\n`;
+            }
+            
+            output.textContent = analysis;
+            switchTab('analysis');
+        }
+        
+        function testFix() {
+            if (!currentData) {
+                showStatus('Please fetch queue data first', 'error');
+                return;
+            }
+            
+            const output = document.getElementById('fixOutput');
+            let testResults = 'REQUESTER NAME DETECTION TEST\n';
+            testResults += '='.repeat(40) + '\n\n';
+            
+            if (!currentData.list || currentData.list.length === 0) {
+                testResults += '❌ No songs to test\n';
+                output.textContent = testResults;
+                switchTab('fix');
+                return;
+            }
+            
+            // Test the improved detection function
+            function getRequesterName(song) {
+                console.log('Testing song:', song);
+                
+                // Try multiple approaches
+                let requestedBy = 'Unknown';
+                let method = 'none';
+                
+                // Method 1: requests array
+                if (song.requests && Array.isArray(song.requests) && song.requests.length > 0) {
+                    const req = song.requests[0];
+                    if (req.name) {
+                        requestedBy = req.name;
+                        method = 'requests[0].name';
+                    } else if (req.username) {
+                        requestedBy = req.username;
+                        method = 'requests[0].username';
+                    } else if (req.displayName) {
+                        requestedBy = req.displayName;
+                        method = 'requests[0].displayName';
+                    } else if (typeof req === 'string') {
+                        requestedBy = req;
+                        method = 'requests[0] (string)';
+                    }
+                }
+                
+                // Method 2: direct requester field
+                if (requestedBy === 'Unknown' && song.requester) {
+                    if (typeof song.requester === 'string') {
+                        requestedBy = song.requester;
+                        method = 'requester (string)';
+                    } else if (song.requester.name) {
+                        requestedBy = song.requester.name;
+                        method = 'requester.name';
+                    } else if (song.requester.username) {
+                        requestedBy = song.requester.username;
+                        method = 'requester.username';
+                    } else if (song.requester.displayName) {
+                        requestedBy = song.requester.displayName;
+                        method = 'requester.displayName';
+                    }
+                }
+                
+                // Method 3: requestedBy field
+                if (requestedBy === 'Unknown' && song.requestedBy) {
+                    requestedBy = song.requestedBy;
+                    method = 'requestedBy';
+                }
+                
+                // Method 4: user field
+                if (requestedBy === 'Unknown' && song.user) {
+                    if (typeof song.user === 'string') {
+                        requestedBy = song.user;
+                        method = 'user (string)';
+                    } else if (song.user.name) {
+                        requestedBy = song.user.name;
+                        method = 'user.name';
+                    } else if (song.user.username) {
+                        requestedBy = song.user.username;
+                        method = 'user.username';
+                    }
+                }
+                
+                return { name: requestedBy, method: method };
+            }
+            
+            // Test each song
+            currentData.list.forEach((song, index) => {
+                const result = getRequesterName(song);
+                testResults += `Song ${index + 1}: "${song.title}"\n`;
+                testResults += `Detected Requester: "${result.name}"\n`;
+                testResults += `Detection Method: ${result.method}\n`;
+                testResults += `Status: ${result.name !== 'Unknown' ? '✅ SUCCESS' : '❌ FAILED'}\n`;
+                testResults += '\n';
+            });
+            
+            // Generate improved code
+            testResults += '\nIMPROVED CODE:\n';
+            testResults += '='.repeat(20) + '\n';
+            testResults += `
+// Enhanced requester detection function
+function getRequesterName(song) {
+    let requestedBy = 'Unknown';
+    
+    // Method 1: requests array (most common)
+    if (song.requests && Array.isArray(song.requests) && song.requests.length > 0) {
+        const req = song.requests[0];
+        requestedBy = req.name || req.username || req.displayName || 
+                     (typeof req === 'string' ? req : 'Unknown');
+    }
+    
+    // Method 2: direct requester field
+    if (requestedBy === 'Unknown' && song.requester) {
+        if (typeof song.requester === 'string') {
+            requestedBy = song.requester;
+        } else {
+            requestedBy = song.requester.name || song.requester.username || 
+                        song.requester.displayName || 'Unknown';
+        }
+    }
+    
+    // Method 3: other possible fields
+    if (requestedBy === 'Unknown') {
+        requestedBy = song.requestedBy || song.user?.name || song.user?.username || 
+                     (typeof song.user === 'string' ? song.user : 'Unknown');
+    }
+    
+    return requestedBy;
+}`;
+            
+            output.textContent = testResults;
+            switchTab('fix');
+        }
+        
+        // Auto-load config from existing streamersonglist.js if available
+        document.addEventListener('DOMContentLoaded', function() {
+            // Try to get config from the existing file
+            if (typeof streamerName !== 'undefined') {
+                document.getElementById('streamerName').value = streamerName;
+            }
+            if (typeof streamerId !== 'undefined') {
+                document.getElementById('streamerId').value = streamerId;
+            }
+        });
+    </script>
+</body>
+</html>
