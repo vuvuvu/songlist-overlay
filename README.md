@@ -35,6 +35,38 @@ Pick **use local file** and then find the ```queue.html``` file from your downlo
 
 When you save, you should see the queue (or lack of queue) show up in the overlay immediately with comic book styling.
 
+## Profile System
+
+The overlay now includes a comprehensive profile system that allows you to customize the appearance and effects without editing code!
+
+### Quick Profile Setup
+
+1. **Open Profile Selector**: Open `profile-selector.html` in your browser
+2. **Choose a Style**: Select from 5 pre-built profiles:
+   - **Superhero** (Default): Comic book style with vibrant effects
+   - **Minimal**: Clean and simple design
+   - **Neon**: Cyberpunk-inspired with glowing effects  
+   - **Retro**: 80s-inspired with classic styling
+   - **Elegant**: Sophisticated with refined typography
+3. **Apply**: Click "Apply Selected Profile" to activate
+4. **Preview**: Use "Preview Overlay" to see the result
+
+### Profile Features
+
+- **Visual Themes**: Complete color schemes and typography
+- **Effect Control**: Enable/disable animations, glow, bounce, etc.
+- **Font Customization**: Different font families for each profile
+- **Layout Options**: Borders, shadows, spacing configurations
+- **Background Styles**: Gradients, patterns, and animations
+
+### Creating Custom Profiles
+
+For advanced customization, edit `profile-config.js` to create your own profiles or modify existing ones. See `PROFILE_GUIDE.md` for detailed instructions.
+
+### Keyboard Shortcuts
+
+- **Ctrl+P**: Open profile selector (when overlay is focused)
+
 ## Superhero Features
 
 ### Information Display

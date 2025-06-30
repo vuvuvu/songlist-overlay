@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Profile System Demo</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .profile-controls {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .preview-area {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .profile-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .profile-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .profile-btn.superhero {
+            background: linear-gradient(45deg, #FFD700, #FF6B35);
+            color: #000;
+        }
+        
+        .profile-btn.minimal {
+            background: linear-gradient(45deg, #E0E0E0, #2196F3);
+            color: #000;
+        }
+        
+        .profile-btn.neon {
+            background: linear-gradient(45deg, #00FFFF, #FF00FF);
+            color: #000;
+        }
+        
+        .profile-btn.retro {
+            background: linear-gradient(45deg, #FFE066, #FF6B9D);
+            color: #000;
+        }
+        
+        .profile-btn.elegant {
+            background: linear-gradient(45deg, #F5F5F5, #D4AF37);
+            color: #000;
+        }
+        
+        .profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .profile-btn.active {
+            border: 3px solid #4CAF50;
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.5);
+        }
+        
+        .preview-frame {
+            width: 100%;
+            height: 300px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            background: #000;
+        }
+        
+        .profile-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        
+        .info-section {
+            margin-bottom: 15px;
+        }
+        
+        .info-title {
+            font-weight: bold;
+            color: #FFD700;
+            margin-bottom: 5px;
+        }
+        
+        .info-content {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .feature-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .feature-enabled {
+            color: #4CAF50;
+        }
+        
+        .feature-disabled {
+            color: #f44336;
+            text-decoration: line-through;
+        }
+        
+        .instructions {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+        
+        .link-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+            margin: 0 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .link-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 Profile System Demo</h1>
+        
+        <div class="demo-grid">
+            <div class="profile-controls">
+                <h2>Profile Controls</h2>
+                <div class="profile-buttons">
+                    <button class="profile-btn superhero active" onclick="selectProfile('superhero')">
+                        🦸 Superhero
+                    </button>
+                    <button class="profile-btn minimal" onclick="selectProfile('minimal')">
+                        🎯 Minimal
+                    </button>
+                    <button class="profile-btn neon" onclick="selectProfile('neon')">
+                        🌈 Neon
+                    </button>
+                    <button class="profile-btn retro" onclick="selectProfile('retro')">
+                        🕹️ Retro
+                    </button>
+                    <button class="profile-btn elegant" onclick="selectProfile('elegant')">
+                        🎩 Elegant
+                    </button>
+                </div>
+                
+                <div class="profile-info" id="profileInfo">
+                    <!-- Profile information will be populated here -->
+                </div>
+            </div>
+            
+            <div class="preview-area">
+                <h2>Live Preview</h2>
+                <iframe class="preview-frame" id="previewFrame" src="queue.html"></iframe>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h2>How to Use</h2>
+            <p>Click any profile button above to see the styling change in real-time!</p>
+            <p>The preview shows how your overlay will look in OBS or streaming software.</p>
+            
+            <div style="margin-top: 20px;">
+                <a href="profile-selector.html" class="link-btn" target="_blank">
+                    🎨 Full Profile Selector
+                </a>
+                <a href="queue.html" class="link-btn" target="_blank">
+                    👁️ Overlay Preview
+                </a>
+                <a href="PROFILE_GUIDE.md" class="link-btn" target="_blank">
+                    📖 Documentation
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentProfile = 'superhero';
+        
+        // Mock profile data for demo (in real implementation, this would come from profiles.js)
+        const profileData = {
+            superhero: {
+                name: "Superhero",
+                description: "Comic book style with vibrant effects",
+                effects: ["Animations", "Flip Board", "Glow", "Bounce", "Pulse", "Shimmer"],
+                colors: ["Gold", "Orange", "Purple", "White"],
+                fonts: ["Bangers", "Fredoka One"]
+            },
+            minimal: {
+                name: "Minimal",
+                description: "Clean and simple design",
+                effects: ["None"],
+                colors: ["White", "Blue", "Gray"],
+                fonts: ["Roboto"]
+            },
+            neon: {
+                name: "Neon",
+                description: "Cyberpunk-inspired with glowing effects",
+                effects: ["Glow", "Pulse", "Shimmer"],
+                colors: ["Cyan", "Magenta", "Green", "Yellow"],
+                fonts: ["Orbitron", "Exo 2"]
+            },
+            retro: {
+                name: "Retro",
+                description: "80s-inspired with warm colors",
+                effects: ["Animations", "Flip Board", "Glow", "Bounce"],
+                colors: ["Yellow", "Pink", "Teal"],
+                fonts: ["Press Start 2P", "VT323"]
+            },
+            elegant: {
+                name: "Elegant",
+                description: "Sophisticated with elegant typography",
+                effects: ["Pulse"],
+                colors: ["Cream", "Gold", "Brown"],
+                fonts: ["Playfair Display", "Source Sans Pro"]
+            }
+        };
+        
+        function selectProfile(profileName) {
+            currentProfile = profileName;
+            
+            // Update active button
+            document.querySelectorAll('.profile-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.profile-btn.${profileName}`).classList.add('active');
+            
+            // Update profile info
+            updateProfileInfo(profileName);
+            
+            // Send message to iframe to change profile
+            const iframe = document.getElementById('previewFrame');
+            if (iframe.contentWindow) {
+                iframe.contentWindow.postMessage({
+                    type: 'changeProfile',
+                    profile: profileName
+                }, '*');
+            }
+        }
+        
+        function updateProfileInfo(profileName) {
+            const profile = profileData[profileName];
+            const infoDiv = document.getElementById('profileInfo');
+            
+            infoDiv.innerHTML = `
+                <div class="info-section">
+                    <div class="info-title">${profile.name}</div>
+                    <div class="info-content">${profile.description}</div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-title">Effects</div>
+                    <div class="feature-list">
+                        ${profile.effects.map(effect => 
+                            `<div class="feature-enabled">✓ ${effect}</div>`
+                        ).join('')}
+                    </div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-title">Colors</div>
+                    <div class="info-content">${profile.colors.join(', ')}</div>
+                </div>
+                
+                <div class="info-section">
+                    <div class="info-title">Fonts</div>
+                    <div class="info-content">${profile.fonts.join(', ')}</div>
+                </div>
+            `;
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            updateProfileInfo('superhero');
+        });
+        
+        // Listen for messages from iframe
+        window.addEventListener('message', function(event) {
+            if (event.data.type === 'profileChanged') {
+                console.log('Profile changed to:', event.data.profile);
+            }
+        });
+    </script>
+</body>
+</html>
