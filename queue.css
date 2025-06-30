@@ -1,44 +1,528 @@
+/* Import superhero comic book fonts */
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Creepster&family=Bungee&family=Fredoka+One:wght@400&display=swap');
+
+/* 4:3 Aspect Ratio Overlay Design */
 body {
-    background: none;
+    background: transparent;
     margin: 0;
-    font-family: Arial, sans-serif;
-}
-
-#queue-wrapper {
-    width: 480px;
-    background: none;
-}
-
-#queue-wrapper > div {
-    background: rgba(0, 0, 0, 0.8);
-    height: 36px;
-    line-height: 36px;
-    color: rgb(255, 255, 255);
-    padding-left: 16px;
-    font-size: 14px;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: space-between;
-    margin-bottom: 2px;
-}
-
-.artist {
-    white-space: nowrap;
-}
-
-.title {
-    font-weight: 800;
-    text-overflow: ellipsis;
+    padding: 0;
+    font-family: 'Bangers', 'Arial', sans-serif;
     overflow: hidden;
-    white-space: nowrap;
-    margin: 0 16px;
+    width: 1024px;
+    height: 768px;
+    position: relative;
+    letter-spacing: 2px;
 }
 
+/* Main queue container - 4:3 aspect ratio */
+#queue-wrapper {
+    width: 1024px;
+    height: 768px;
+    background: 
+        radial-gradient(circle at 30% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(76, 175, 80, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 20% 80%, rgba(33, 150, 243, 0.1) 0%, transparent 50%),
+        transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add some comic book style background elements */
+#queue-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 2px,
+            rgba(255, 215, 0, 0.03) 2px,
+            rgba(255, 215, 0, 0.03) 4px
+        );
+    animation: backgroundShift 20s linear infinite;
+    z-index: -1;
+}
+
+/* Song container for individual songs */
+.song-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    opacity: 0;
+    padding: 30px;
+    box-sizing: border-box;
+    perspective: 1000px;
+    background: 
+        radial-gradient(ellipse at center, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+}
+
+/* Animation states for flip transitions */
+.song-container.entering {
+    animation: flipEnter 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.song-container.exiting {
+    animation: flipExit 0.8s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+.song-container.static {
+    opacity: 1;
+    transform: rotateY(0deg) scale(1);
+}
+
+/* Song position display */
+.song-position {
+    font-family: 'Fredoka One', 'Bangers', sans-serif;
+    font-size: 48px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 
+        3px 3px 0px #FF6B35,
+        6px 6px 0px #FF1744,
+        9px 9px 15px rgba(0, 0, 0, 0.8);
+    margin-bottom: 25px;
+    display: block;
+    letter-spacing: 3px;
+    transform-style: preserve-3d;
+    animation: positionBounce 2s ease-in-out infinite;
+    text-align: center;
+    border-bottom: 3px solid rgba(255, 215, 0, 0.3);
+    padding-bottom: 10px;
+}
+
+/* Song title */
+.song-title {
+    font-family: 'Bangers', sans-serif;
+    font-size: 64px;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-shadow: 
+        3px 3px 0px #4CAF50,
+        6px 6px 0px #2196F3,
+        9px 9px 20px rgba(0, 0, 0, 0.9);
+    line-height: 1.1;
+    word-wrap: break-word;
+    max-width: 100%;
+    letter-spacing: 2px;
+    transform-style: preserve-3d;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    text-align: center;
+    animation: titleGlow 3s ease-in-out infinite;
+    padding: 10px 0;
+    border-left: 5px solid rgba(76, 175, 80, 0.5);
+    border-right: 5px solid rgba(33, 150, 243, 0.5);
+}
+
+/* Song artist */
+.song-artist {
+    font-family: 'Bangers', sans-serif;
+    font-size: 48px;
+    font-weight: bold;
+    color: #FF6B35;
+    text-shadow: 
+        2px 2px 0px #FFFFFF,
+        4px 4px 0px #FF1744,
+        6px 6px 15px rgba(0, 0, 0, 0.8);
+    line-height: 1.1;
+    word-wrap: break-word;
+    max-width: 100%;
+    letter-spacing: 2px;
+    transform-style: preserve-3d;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+    text-align: center;
+    animation: artistPulse 2.5s ease-in-out infinite;
+}
+
+/* Song requester */
+.song-requester {
+    font-family: 'Fredoka One', sans-serif;
+    font-size: 36px;
+    font-weight: bold;
+    color: #9C27B0;
+    text-shadow: 
+        2px 2px 0px #FFFFFF,
+        4px 4px 0px #E91E63,
+        6px 6px 12px rgba(0, 0, 0, 0.8);
+    line-height: 1.1;
+    word-wrap: break-word;
+    max-width: 100%;
+    letter-spacing: 1px;
+    transform-style: preserve-3d;
+    text-transform: uppercase;
+    text-align: center;
+    animation: requesterShimmer 4s ease-in-out infinite;
+}
+
+/* Legacy song-text class for empty queue message */
+.song-text {
+    font-family: 'Bangers', sans-serif;
+    font-size: 64px;
+    font-weight: bold;
+    color: #FFFFFF;
+    text-shadow: 
+        3px 3px 0px #4CAF50,
+        6px 6px 0px #2196F3,
+        9px 9px 0px #9C27B0,
+        12px 12px 25px rgba(0, 0, 0, 0.9);
+    line-height: 1.1;
+    word-wrap: break-word;
+    max-width: 100%;
+    letter-spacing: 3px;
+    transform-style: preserve-3d;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+/* Flip board segments for text */
+.flip-segment {
+    display: inline-block;
+    transform-style: preserve-3d;
+    animation: letterFlip 0.6s ease-in-out;
+    animation-fill-mode: both;
+}
+
+.flip-segment:nth-child(odd) {
+    animation-delay: 0.1s;
+}
+
+.flip-segment:nth-child(even) {
+    animation-delay: 0.2s;
+}
+
+/* Queue information panel */
+#queue-info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.9), rgba(33, 150, 243, 0.9));
+    padding: 15px 20px;
+    border-radius: 15px;
+    border: 3px solid #FFD700;
+    font-family: 'Fredoka One', sans-serif;
+    font-size: 18px;
+    color: white;
+    z-index: 100;
+    box-shadow: 
+        0 0 20px rgba(255, 215, 0, 0.5),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+    animation: infoPulse 3s ease-in-out infinite;
+}
+
+.queue-count {
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.connection-status {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.connection-status.connected {
+    color: #4CAF50;
+}
+
+.connection-status.disconnected {
+    color: #f44336;
+}
+
+/* More songs indicator */
+.more-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.9), rgba(255, 23, 68, 0.9));
+    padding: 12px 18px;
+    border-radius: 20px;
+    border: 2px solid #FFD700;
+    font-family: 'Fredoka One', sans-serif;
+    font-size: 18px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    animation: moreBounce 1.5s ease-in-out infinite;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+/* Notification system */
+.notification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: linear-gradient(135deg, rgba(156, 39, 176, 0.95), rgba(233, 30, 99, 0.95));
+    color: white;
+    padding: 25px 35px;
+    border-radius: 20px;
+    border: 4px solid #FFD700;
+    font-family: 'Bangers', sans-serif;
+    font-size: 32px;
+    font-weight: bold;
+    text-align: center;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 200;
+    max-width: 80%;
+    word-wrap: break-word;
+    box-shadow: 
+        0 0 30px rgba(255, 215, 0, 0.8),
+        inset 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+    animation: notificationPulse 0.8s ease-in-out;
+}
+
+/* Text transformation classes */
 .caps {
     text-transform: uppercase;
 }
 
-.more {
-    font-weight: bold;
-    text-align: right;
+/* Airport flip-board style animations */
+@keyframes flipEnter {
+    0% {
+        opacity: 0;
+        transform: rotateY(-90deg) scale(0.8);
+    }
+    50% {
+        opacity: 0.7;
+        transform: rotateY(-45deg) scale(1.1);
+    }
+    100% {
+        opacity: 1;
+        transform: rotateY(0deg) scale(1);
+    }
+}
+
+@keyframes flipExit {
+    0% {
+        opacity: 1;
+        transform: rotateY(0deg) scale(1);
+    }
+    50% {
+        opacity: 0.7;
+        transform: rotateY(45deg) scale(1.1);
+    }
+    100% {
+        opacity: 0;
+        transform: rotateY(90deg) scale(0.8);
+    }
+}
+
+/* Letter-by-letter flip animation */
+@keyframes letterFlip {
+    0% {
+        transform: rotateY(-180deg) scale(0.5);
+        opacity: 0;
+    }
+    50% {
+        transform: rotateY(-90deg) scale(1.2);
+        opacity: 0.8;
+    }
+    100% {
+        transform: rotateY(0deg) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Bouncy position animation */
+@keyframes positionBounce {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    25% {
+        transform: translateY(-10px) scale(1.05);
+    }
+    50% {
+        transform: translateY(-5px) scale(1.02);
+    }
+    75% {
+        transform: translateY(-8px) scale(1.03);
+    }
+}
+
+/* Info panel pulse */
+@keyframes infoPulse {
+    0%, 100% {
+        box-shadow: 
+            0 0 20px rgba(255, 215, 0, 0.5),
+            inset 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+    50% {
+        box-shadow: 
+            0 0 30px rgba(255, 215, 0, 0.8),
+            inset 0 0 30px rgba(255, 255, 255, 0.2);
+    }
+}
+
+/* More indicator bounce */
+@keyframes moreBounce {
+    0%, 100% {
+        transform: translateY(0px) scale(1);
+    }
+    50% {
+        transform: translateY(-8px) scale(1.1);
+    }
+}
+
+/* Notification pulse */
+@keyframes notificationPulse {
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    25% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    75% {
+        transform: translate(-50%, -50%) scale(1.05);
+    }
+}
+
+/* Background animation */
+@keyframes backgroundShift {
+    0% {
+        transform: translateX(0) translateY(0);
+    }
+    100% {
+        transform: translateX(-4px) translateY(-4px);
+    }
+}
+
+/* Add some sparkle effects */
+.song-container::after {
+    content: '* * * * *';
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 24px;
+    color: rgba(255, 215, 0, 0.6);
+    animation: sparkle 3s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes sparkle {
+    0%, 100% {
+        opacity: 0.3;
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateX(-50%) scale(1.2);
+    }
+}
+
+/* Title glow animation */
+@keyframes titleGlow {
+    0%, 100% {
+        text-shadow: 
+            3px 3px 0px #4CAF50,
+            6px 6px 0px #2196F3,
+            9px 9px 20px rgba(0, 0, 0, 0.9);
+    }
+    50% {
+        text-shadow: 
+            3px 3px 0px #4CAF50,
+            6px 6px 0px #2196F3,
+            9px 9px 30px rgba(76, 175, 80, 0.8),
+            12px 12px 40px rgba(33, 150, 243, 0.6);
+    }
+}
+
+/* Artist pulse animation */
+@keyframes artistPulse {
+    0%, 100% {
+        transform: scale(1);
+        text-shadow: 
+            2px 2px 0px #FFFFFF,
+            4px 4px 0px #FF1744,
+            6px 6px 15px rgba(0, 0, 0, 0.8);
+    }
+    50% {
+        transform: scale(1.02);
+        text-shadow: 
+            2px 2px 0px #FFFFFF,
+            4px 4px 0px #FF1744,
+            6px 6px 25px rgba(255, 107, 53, 0.8),
+            8px 8px 35px rgba(255, 23, 68, 0.6);
+    }
+}
+
+/* Requester shimmer animation */
+@keyframes requesterShimmer {
+    0%, 100% {
+        color: #9C27B0;
+        text-shadow: 
+            2px 2px 0px #FFFFFF,
+            4px 4px 0px #E91E63,
+            6px 6px 12px rgba(0, 0, 0, 0.8);
+    }
+    33% {
+        color: #E91E63;
+        text-shadow: 
+            2px 2px 0px #FFFFFF,
+            4px 4px 0px #9C27B0,
+            6px 6px 20px rgba(156, 39, 176, 0.8);
+    }
+    66% {
+        color: #673AB7;
+        text-shadow: 
+            2px 2px 0px #FFFFFF,
+            4px 4px 0px #3F51B5,
+            6px 6px 20px rgba(103, 58, 183, 0.8);
+    }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1024px) {
+    body, #queue-wrapper {
+        width: 100vw;
+        height: 75vw; /* Maintain 4:3 ratio */
+        max-height: 100vh;
+    }
+    
+    .song-position {
+        font-size: 4vw;
+    }
+    
+    .song-title {
+        font-size: 5.5vw;
+    }
+    
+    .song-artist {
+        font-size: 4vw;
+    }
+    
+    .song-requester {
+        font-size: 3vw;
+    }
+    
+    .song-text {
+        font-size: 5vw;
+    }
+    
+    #queue-info {
+        font-size: 1.5vw;
+    }
 }

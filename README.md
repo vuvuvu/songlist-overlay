@@ -1,8 +1,8 @@
-# Streamer Song List overlays
+# Superhero StreamerSongList Overlay
 
-A simple overlay for displaying your current queue on streamersonglist.com.
+A dynamic, comic book-styled overlay for displaying your current queue on streamersonglist.com with airport flip-board animations!
 
-If you are a Twitch streamer using streamersonglist.com and you would like to be able to show your song list on the screen for your viewers, you can use this overlay to do so.
+If you are a Twitch streamer using streamersonglist.com and you would like to show your song list on screen with superhero flair, this overlay provides an exciting visual experience for your viewers.
 
 ## Prerequisites
 
@@ -25,21 +25,62 @@ Replace **yourTwitchName** with your Twitch name, making sure to keep the double
 
 If you would like to test if it's working properly, you can open the ```queue.html``` file in your browser. Usually you can just double-click this from Windows Explorer to open it in a browser.
 
-You should see "queue is empty". If this is the case, you can add songs to your queue using streamersonglist.com and make sure that they appear. You will need to wait up to 10 seconds to see the changes show up.
+You should see "queue is empty" with superhero styling. If this is the case, you can add songs to your queue using streamersonglist.com and watch them appear with dynamic flip-board animations.
 
 ## Streaming setup
 
-Add a new Browser Source to your overlays. This should be at a width of 480, and a height to suit. If you are planning to have a long queue, you might want a bigger height. 480 is a good default if you're not sure.
+Add a new Browser Source to your overlays. This should be at a width of **1024** and a height of **768** for the optimal 4:3 aspect ratio display.
 
 Pick **use local file** and then find the ```queue.html``` file from your download, such as **C:\streamoverlays\queue.html**.
 
-When you save, you should see the queue (or lack of queue) show up in the overlay immediately.
+When you save, you should see the queue (or lack of queue) show up in the overlay immediately with comic book styling.
 
-## Known issues
+## Superhero Features
 
-Because we need to make two different API requests sometimes, not all the data will load in, when the page (overlay) first loads. It will update properly once it refreshes for the first time.
+### Information Display
+- **Multi-Line Layout**: Each piece of information gets its own dedicated line
+- **Queue Position**: Bouncy counter with golden borders and visual separators
+- **Song Title**: Large, prominent display with glowing text effects
+- **Artist Name**: Distinct orange styling with pulse animations
+- **Requested By**: Purple shimmer effects with color cycling
+- **Visual Hierarchy**: Clear information structure with proper spacing
 
-For example, if you have a maximum number of requests, it will always show as 0 when the overlay first loads, and will update after ten seconds.
+### Animation System
+- **Airport Flip-Board Transitions**: Songs transition with realistic flip-board animations
+- **Letter-by-Letter Animation**: Text appears with staggered letter animations
+- **Position Bounce**: Queue position continuously bounces with superhero energy
+- **Title Glow**: Song titles pulse with enhanced glow effects
+- **Artist Pulse**: Artist names scale and pulse with enhanced shadows
+- **Requester Shimmer**: Requested by text cycles through purple color variations
+
+### Visual Effects
+- **Comic Book Fonts**: Uses Bangers and Fredoka One fonts for authentic superhero styling
+- **Colorful Text Effects**: Multi-layered text shadows in vibrant colors
+- **Sparkle Effects**: Animated sparkles add visual flair above content
+- **Glowing Borders**: Pulsing golden borders on info panels
+- **Dynamic Notifications**: Scaling notifications with comic book styling
+- **Background Animation**: Subtle animated background patterns
+
+## Technical Features
+
+- **4:3 Aspect Ratio Design**: Optimized for streaming overlays with 1024x768 resolution
+- **Real-time WebSocket Updates**: Instant updates when songs are added, removed, or played
+- **Song Rotation**: Automatically cycles through queue items with smooth animations
+- **Queue Information**: Shows current queue count and connection status
+- **Responsive Design**: Adapts to different screen sizes while maintaining aspect ratio
+- **Song Limit Display**: Shows remaining or maximum song requests (configurable)
+
+## Fixed Issues
+
+- Fixed missing `addDivToQueueWrapper` function error
+- Fixed incorrect sort function that was returning boolean instead of number
+- Fixed memory leak from multiple `setInterval` timers
+- Implemented proper queue rotation with interval management
+- Added comprehensive WebSocket event handling
+- Unified CSS styling with consistent 4:3 aspect ratio
+- Added notification system for real-time feedback
+- Implemented `maxQueueItems` and `showMore` functionality
+- Added song limit display functionality
 
 ## Settings
 
@@ -57,7 +98,7 @@ For example, if your name on Twitch is "My_Cool_Name", you would use "my_cool_na
 
 ### streamerId
 
-Not currently used.
+Your streamer ID from streamersonglist.com. This is required for WebSocket functionality.
 
 ### allCaps
 
@@ -66,8 +107,6 @@ If this is ```true```, it will cause the queue to be shown in capital letters al
 ### maxQueueItems
 
 The maximum number of items that will be shown in the queue. For example, if you set this to ```3```, only the first three items in the queue will appear. See **showMore** if you want to let viewers know that there are more than your maximum number of items in the queue.
-
-Note that setting this to ```0``` will not cause an unlimited number of items to be shown. If you want an unlimited number to be shown, set this to ```999``` or another really high value. This is not recommended, because eventually the bottom of the queue will go off the screen!
 
 ### showMore
 
@@ -78,9 +117,34 @@ If ```true```, a "+X more in queue" message will appear at the bottom of the que
 If set to something other than ```no```, will show the request limit current configured in Streamer Song List.
   
  There are two possible values you could use here:
- - ```maximum``` will show the total number of requests allowed for this stream, as set by your "Song Limit" in the Streamer Song List queue settings.
- - ```remaining``` will show the number of requests that are remaining, which is the maximum minus the number that have already been played.
+ - ```maximum``` will show the total number of requests allowed for this stream
+ - ```remaining``` will show the number of requests that are remaining
 
-### songLimitMessage
+### rotationSpeed
 
-If showSongLimit is ```remaining```, this controls the message that will appear on the screen. The ```#``` will be replaced by the remaining number of requests, and plurals (request/requests) will be handled automatically.
+The speed at which songs in the queue rotate, in milliseconds. Default is 5000 (5 seconds). Note that additional time is added for flip animations.
+
+## WebSocket Events
+
+The overlay now supports real-time updates through WebSocket connections, providing instant feedback for:
+
+- New songs added to queue (with notifications)
+- Songs removed from queue (with notifications)
+- Songs played and moved to history (with "Now Playing" notifications)
+- Queue updates and changes
+- Connection status monitoring
+
+## Animation Details
+
+The overlay features several animation types:
+
+- **Flip Enter**: Songs enter with a 3D flip from -90 degrees with bounce
+- **Flip Exit**: Songs exit with a 3D flip to 90 degrees
+- **Letter Flip**: Individual letters animate in with staggered timing
+- **Position Bounce**: Queue position continuously bounces
+- **Info Pulse**: Information panels pulse with glowing effects
+- **Sparkle**: Decorative sparkles animate above songs
+
+## Browser Compatibility
+
+This overlay works in all modern browsers and is optimized for use in streaming software browser sources like OBS and StreamLabs OBS.
