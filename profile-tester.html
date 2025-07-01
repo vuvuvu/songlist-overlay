@@ -254,38 +254,40 @@
             <div class="control-section">
                 <div class="control-title">🎨 Profile Selection</div>
                 <div class="profile-grid">
-                    <button class="profile-btn active" onclick="testProfile('superhero')">Superhero</button>
-                    <button class="profile-btn" onclick="testProfile('minimal')">Minimal</button>
-                    <button class="profile-btn" onclick="testProfile('neon')">Neon</button>
-                    <button class="profile-btn" onclick="testProfile('retro')">Retro</button>
-                    <button class="profile-btn" onclick="testProfile('elegant')">Elegant</button>
-                    <button class="profile-btn" onclick="testProfile('gaming')">Gaming</button>
-                    <button class="profile-btn" onclick="testProfile('music')">Music</button>
-                    <button class="profile-btn" onclick="testProfile('chatting')">Chatting</button>
-                    <button class="profile-btn" onclick="testProfile('horror')">Horror</button>
-                    <button class="profile-btn" onclick="testProfile('kawaii')">Kawaii</button>
-                    <button class="profile-btn" onclick="testProfile('synthwave')">Synthwave</button>
-                    <button class="profile-btn" onclick="testProfile('nature')">Nature</button>
-                    <button class="profile-btn" onclick="testProfile('corporate')">Corporate</button>
+                    <button class="profile-btn active" onclick="testProfile('superhero', event)">Superhero</button>
+                    <button class="profile-btn" onclick="testProfile('minimal', event)">Minimal</button>
+                    <button class="profile-btn" onclick="testProfile('neon', event)">Neon</button>
+                    <button class="profile-btn" onclick="testProfile('retro', event)">Retro</button>
+                    <button class="profile-btn" onclick="testProfile('elegant', event)">Elegant</button>
+                    <button class="profile-btn" onclick="testProfile('gaming', event)">Gaming</button>
+                    <button class="profile-btn" onclick="testProfile('music', event)">Music</button>
+                    <button class="profile-btn" onclick="testProfile('chatting', event)">Chatting</button>
+                    <button class="profile-btn" onclick="testProfile('horror', event)">Horror</button>
+                    <button class="profile-btn" onclick="testProfile('kawaii', event)">Kawaii</button>
+                    <button class="profile-btn" onclick="testProfile('synthwave', event)">Synthwave</button>
+                    <button class="profile-btn" onclick="testProfile('nature', event)">Nature</button>
+                    <button class="profile-btn" onclick="testProfile('corporate', event)">Corporate</button>
                 </div>
             </div>
             
             <div class="control-section">
-                <div class="control-title">🎵 Song Testing</div>
+                <div class="control-title">🎵 Song Simulation</div>
                 <div class="song-controls">
                     <input type="text" class="song-input" id="songTitle" placeholder="Song Title" value="Never Gonna Give You Up">
                     <input type="text" class="song-input" id="songArtist" placeholder="Artist" value="Rick Astley">
                     <input type="text" class="song-input" id="songRequester" placeholder="Requested by" value="TestUser123">
-                    <button class="action-btn" onclick="updateTestSong()">Update Song</button>
                 </div>
-                
                 <div class="test-songs">
                     <div style="font-size: 0.9em; margin-bottom: 8px; color: #ccc;">Quick Test Songs:</div>
                     <button class="test-song-btn" onclick="loadTestSong('Bohemian Rhapsody', 'Queen', 'MusicLover')">Bohemian Rhapsody - Queen</button>
                     <button class="test-song-btn" onclick="loadTestSong('Thunderstruck', 'AC/DC', 'RockFan99')">Thunderstruck - AC/DC</button>
                     <button class="test-song-btn" onclick="loadTestSong('Anime Thighs', 'MC Virgins', 'WeebMaster')">Anime Thighs - MC Virgins</button>
-                    <button class="test-song-btn" onclick="loadTestSong('Cyberpunk 2077 OST', 'Various Artists', 'GamerGirl')">Cyberpunk 2077 OST</button>
-                    <button class="test-song-btn" onclick="loadTestSong('Lo-fi Hip Hop Mix', 'ChillBeats', 'StudyTime')">Lo-fi Hip Hop Mix</button>
+                </div>
+                <div class="action-buttons">
+                     <button class="action-btn" onclick="simulateQueueUpdate()">Simulate Update</button>
+                     <button class="action-btn" onclick="simulateAddSong()">Simulate Add</button>
+                     <button class="action-btn" onclick="simulateRemoveSong()">Simulate Remove</button>
+                     <button class="action-btn danger" onclick="simulateClearQueue()">Simulate Clear</button>
                 </div>
             </div>
             
@@ -343,25 +345,67 @@
             
             <div class="overlay-frame" id="overlayFrame">
                 <div id="queue-wrapper">
-                    <div class="song-container static">
-                        <div class="song-position">1</div>
-                        <div class="song-title">Never Gonna Give You Up</div>
-                        <div class="song-artist">Rick Astley</div>
-                        <div class="song-requester">Requested by TestUser123</div>
-                    </div>
+                    <!-- The main script will render the queue here -->
                 </div>
             </div>
         </div>
     </div>
 
     <script src="lib/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.socket.io/2.5.0/socket.io.js"></script>
     <script src="profiles.js"></script>
     <script src="profile-config.js"></script>
     
     <script>
+        // Mock Socket.IO and API calls before streamersonglist.js is loaded
+        const mockSocketHandlers = {};
+        const mockSocket = {
+            on: (event, handler) => {
+                console.log(`MockSocket: Registered handler for event '${event}'`);
+                mockSocketHandlers[event] = handler;
+            },
+            emit: (event, data) => {
+                console.log(`MockSocket: Emitting event '${event}' with data:`, data);
+            },
+            disconnect: () => {
+                console.log('MockSocket: disconnect called');
+            },
+            trigger: (event, data) => {
+                console.log(`MockSocket: Triggering event '${event}' with data:`, data);
+                if (mockSocketHandlers[event]) {
+                    mockSocketHandlers[event](data);
+                } else {
+                    console.warn(`MockSocket: No handler registered for event '${event}'`);
+                }
+            }
+        };
+        window.io = () => {
+            console.log('MockSocket: io() called, returning mock socket.');
+            setTimeout(() => mockSocket.trigger('connect'), 100); // Simulate async connection
+            return mockSocket;
+        };
+
+        // Mock jQuery's ajax for the queue API call
+        const originalAjax = $.ajax;
+        let mockQueueList = [];
+        $.ajax = function(options) {
+            if (options.url && options.url.includes('/queue')) {
+                console.log('Mocking API call to /queue');
+                options.success({ list: mockQueueList, max: 20 });
+                return {
+                    fail: function() { return this; },
+                    done: function() { return this; }
+                };
+            }
+            return originalAjax(options);
+        };
+    </script>
+
+    <script src="lib/streamersonglist.js"></script>
+
+    <script>
         let currentProfile = 'superhero';
         let cycleInterval = null;
-        let fpsCounter = 0;
         let lastTime = performance.now();
         
         // Initialize
@@ -369,18 +413,25 @@
             updateProfileInfo();
             startFPSCounter();
             checkPerformance();
+            // Initial song
+            simulateQueueUpdate();
         });
         
-        function testProfile(profileName) {
+        function testProfile(profileName, event) {
             currentProfile = profileName;
             
-            // Update active button
-            document.querySelectorAll('.profile-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            event.target.classList.add('active');
+            document.querySelectorAll('.profile-btn').forEach(btn => btn.classList.remove('active'));
+            // Safely access event target if event is provided
+            if (event && event.target) {
+                event.target.classList.add('active');
+            } else {
+                // Fallback for calls without an event object
+                const btnToActivate = Array.from(document.querySelectorAll('.profile-btn')).find(btn => btn.textContent.toLowerCase() === profileName.toLowerCase());
+                if (btnToActivate) {
+                    btnToActivate.classList.add('active');
+                }
+            }
             
-            // Apply profile
             if (typeof applyProfile !== 'undefined') {
                 applyProfile(profileName);
                 updateProfileInfo();
@@ -393,21 +444,16 @@
         
         function updateProfileInfo() {
             if (typeof getCurrentProfile === 'undefined') return;
-            
             const profile = getCurrentProfile();
             document.getElementById('profileName').textContent = profile.name;
             document.getElementById('profileDesc').textContent = profile.description;
             document.getElementById('profileFont').textContent = profile.fonts.primary;
-            
-            const enabledEffects = Object.keys(profile.effects)
-                .filter(key => profile.effects[key])
-                .join(', ');
+            const enabledEffects = Object.keys(profile.effects).filter(key => profile.effects[key]).join(', ');
             document.getElementById('profileEffects').textContent = enabledEffects || 'None';
         }
         
         function updateEffectToggles() {
             if (typeof getCurrentProfile === 'undefined') return;
-            
             const profile = getCurrentProfile();
             document.getElementById('animationsToggle').checked = profile.effects.animations;
             document.getElementById('glowToggle').checked = profile.effects.glow;
@@ -423,48 +469,71 @@
             root.style.setProperty(`--${effectName}-enabled`, checkbox.checked ? '1' : '0');
             updateStatus(`${effectName} ${checkbox.checked ? 'enabled' : 'disabled'}`);
         }
-        
-        function updateTestSong() {
+
+        function createMockSong(position = 1) {
             const title = document.getElementById('songTitle').value;
             const artist = document.getElementById('songArtist').value;
             const requester = document.getElementById('songRequester').value;
-            
-            document.querySelector('.song-title').textContent = title;
-            document.querySelector('.song-artist').textContent = artist;
-            document.querySelector('.song-requester').textContent = `Requested by ${requester}`;
-            
-            updateStatus('Song updated');
+            return {
+                id: Date.now() + Math.random(),
+                title: title,
+                artist: artist,
+                position: position,
+                requests: [{ name: requester }]
+            };
+        }
+
+        function simulateQueueUpdate() {
+            mockQueueList = [createMockSong()];
+            mockSocket.trigger('queue-update', { list: mockQueueList });
+            updateStatus('Simulated: queue-update (1 song)');
+        }
+
+        function simulateAddSong() {
+            const newSong = createMockSong(mockQueueList.length + 1);
+            mockQueueList.push(newSong);
+            mockSocket.trigger('new-song', newSong);
+            updateStatus(`Simulated: new-song. Queue size: ${mockQueueList.length}`);
+        }
+
+        function simulateRemoveSong() {
+            if (mockQueueList.length === 0) {
+                updateStatus('Cannot remove from empty queue');
+                return;
+            }
+            const removedSong = mockQueueList.shift();
+            // Re-order positions
+            mockQueueList.forEach((song, index) => song.position = index + 1);
+            mockSocket.trigger('delete-song', removedSong);
+            updateStatus(`Simulated: delete-song. Queue size: ${mockQueueList.length}`);
+        }
+
+        function simulateClearQueue() {
+            mockQueueList = [];
+            // streamersonglist.js seems to clear the queue on an empty list
+            mockSocket.trigger('queue-update', { list: [] });
+            updateStatus('Simulated: Cleared queue');
         }
         
         function loadTestSong(title, artist, requester) {
             document.getElementById('songTitle').value = title;
             document.getElementById('songArtist').value = artist;
             document.getElementById('songRequester').value = requester;
-            updateTestSong();
+            simulateQueueUpdate();
         }
         
         function randomizeTest() {
             const profiles = ['superhero', 'minimal', 'neon', 'retro', 'elegant', 'gaming', 'music', 'chatting', 'horror', 'kawaii', 'synthwave', 'nature', 'corporate'];
             const randomProfile = profiles[Math.floor(Math.random() * profiles.length)];
+            const profileBtn = Array.from(document.querySelectorAll('.profile-btn')).find(btn => btn.textContent.toLowerCase() === randomProfile);
+            if (profileBtn) testProfile(randomProfile, { target: profileBtn });
             
             const testSongs = [
                 ['Bohemian Rhapsody', 'Queen', 'MusicLover'],
                 ['Thunderstruck', 'AC/DC', 'RockFan99'],
-                ['Anime Thighs', 'MC Virgins', 'WeebMaster'],
-                ['Cyberpunk 2077 OST', 'Various Artists', 'GamerGirl'],
-                ['Lo-fi Hip Hop Mix', 'ChillBeats', 'StudyTime'],
-                ['Never Gonna Give You Up', 'Rick Astley', 'TestUser123'],
-                ['Megalovania', 'Toby Fox', 'UndertaleGamer'],
-                ['Giorno\'s Theme', 'Yugo Kanno', 'JoJoFan'],
-                ['BFG Division', 'Mick Gordon', 'DoomSlayer']
+                ['Anime Thighs', 'MC Virgins', 'WeebMaster']
             ];
             const randomSong = testSongs[Math.floor(Math.random() * testSongs.length)];
-            
-            // Find and click the profile button
-            const profileBtn = Array.from(document.querySelectorAll('.profile-btn'))
-                .find(btn => btn.textContent.toLowerCase() === randomProfile);
-            if (profileBtn) profileBtn.click();
-            
             loadTestSong(...randomSong);
             updateStatus(`Randomized to ${randomProfile} profile`);
         }
@@ -482,9 +551,9 @@
             
             cycleInterval = setInterval(() => {
                 currentIndex = (currentIndex + 1) % profiles.length;
-                const profileBtn = Array.from(document.querySelectorAll('.profile-btn'))
-                    .find(btn => btn.textContent.toLowerCase() === profiles[currentIndex]);
-                if (profileBtn) profileBtn.click();
+                const profileName = profiles[currentIndex];
+                const profileBtn = Array.from(document.querySelectorAll('.profile-btn')).find(btn => btn.textContent.toLowerCase() === profileName);
+                if (profileBtn) testProfile(profileName, { target: profileBtn });
             }, 3000);
             
             updateStatus('Cycling profiles every 3 seconds');
@@ -492,22 +561,14 @@
         
         function exportProfile() {
             if (typeof getCurrentProfile === 'undefined') return;
-            
             const profile = getCurrentProfile();
-            const exportData = {
-                name: profile.name,
-                profile: profile,
-                timestamp: new Date().toISOString()
-            };
-            
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+            const blob = new Blob([JSON.stringify({ name: profile.name, profile: profile }, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = `${profile.name.toLowerCase()}-profile.json`;
             a.click();
             URL.revokeObjectURL(url);
-            
             updateStatus(`Exported ${profile.name} profile`);
         }
         
@@ -516,11 +577,8 @@
                 clearInterval(cycleInterval);
                 cycleInterval = null;
             }
-            
-            const superheroBtn = Array.from(document.querySelectorAll('.profile-btn'))
-                .find(btn => btn.textContent === 'Superhero');
-            if (superheroBtn) superheroBtn.click();
-            
+            const superheroBtn = Array.from(document.querySelectorAll('.profile-btn')).find(btn => btn.textContent === 'Superhero');
+            if (superheroBtn) testProfile('superhero', { target: superheroBtn });
             loadTestSong('Never Gonna Give You Up', 'Rick Astley', 'TestUser123');
             updateStatus('Reset to default');
         }
@@ -528,41 +586,28 @@
         function updateStatus(message) {
             const statusBar = document.getElementById('statusBar');
             statusBar.textContent = `Profile: ${currentProfile} | ${message}`;
-            
-            setTimeout(() => {
-                statusBar.textContent = `Profile: ${currentProfile} | Status: Ready`;
-            }, 3000);
         }
         
         function startFPSCounter() {
             function updateFPS() {
                 const now = performance.now();
-                const delta = now - lastTime;
+                const fps = Math.round(1000 / (now - lastTime));
                 lastTime = now;
-                
-                const fps = Math.round(1000 / delta);
                 document.getElementById('fpsCounter').textContent = `FPS: ${fps}`;
-                
                 if (fps < 30) {
                     document.getElementById('performanceWarning').style.display = 'block';
                 } else {
                     document.getElementById('performanceWarning').style.display = 'none';
                 }
-                
                 requestAnimationFrame(updateFPS);
             }
             updateFPS();
         }
         
         function checkPerformance() {
-            // Simple performance check
             const start = performance.now();
-            for (let i = 0; i < 100000; i++) {
-                Math.random();
-            }
-            const end = performance.now();
-            
-            if (end - start > 10) {
+            for (let i = 0; i < 100000; i++) { Math.random(); }
+            if (performance.now() - start > 10) {
                 document.getElementById('performanceWarning').style.display = 'block';
             }
         }
@@ -573,13 +618,12 @@
                 const profiles = ['superhero', 'minimal', 'neon', 'retro', 'elegant', 'gaming', 'music', 'chatting', 'horror'];
                 const index = parseInt(e.key) - 1;
                 if (profiles[index]) {
-                    const profileBtn = Array.from(document.querySelectorAll('.profile-btn'))
-                        .find(btn => btn.textContent.toLowerCase() === profiles[index]);
-                    if (profileBtn) profileBtn.click();
+                    const profileBtn = Array.from(document.querySelectorAll('.profile-btn')).find(btn => btn.textContent.toLowerCase() === profiles[index]);
+                    if (profileBtn) testProfile(profiles[index], { target: profileBtn });
                 }
-            } else if (e.key === 'r') {
+            } else if (e.key.toLowerCase() === 'r') {
                 randomizeTest();
-            } else if (e.key === 'c') {
+            } else if (e.key.toLowerCase() === 'c') {
                 cycleProfiles();
             } else if (e.key === 'Escape') {
                 resetToDefault();

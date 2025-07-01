@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamerSongList Overlay - Project Index</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #2d3748;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .link-item {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .link-item:hover {
+            background: #edf2f7;
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .link-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+        .link-description {
+            font-size: 0.9em;
+            color: #718096;
+        }
+        .main-overlay {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+        .main-overlay:hover {
+            background: linear-gradient(135deg, #5a67d8, #6b46c1);
+            color: white;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 StreamerSongList Overlay</h1>
+        <p class="subtitle">Project Navigation & Testing Suite</p>
+        
+        <div class="section">
+            <h2>🎯 Main Application</h2>
+            <div class="links-grid">
+                <a href="queue.html" class="link-item main-overlay">
+                    <div class="link-title">Queue Overlay (Main)</div>
+                    <div class="link-description">The primary song queue overlay for streaming</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🧪 Testing & Debug Tools</h2>
+            <div class="links-grid">
+                <a href="test-suite.html" class="link-item">
+                    <div class="link-title">Test Suite</div>
+                    <div class="link-description">A centralized hub for all essential testing tools.</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔧 Configuration & Setup</h2>
+            <div class="links-grid">
+                <a href="config-test.html" class="link-item">
+                    <div class="link-title">Configuration Test</div>
+                    <div class="link-description">Test configuration settings</div>
+                </a>
+                <a href="connection-debug.html" class="link-item">
+                    <div class="link-title">Connection Debug</div>
+                    <div class="link-description">WebSocket connection testing</div>
+                </a>
+                <a href="socket-connection-test.html" class="link-item">
+                    <div class="link-title">Socket Connection Test</div>
+                    <div class="link-description">Socket.IO connection verification</div>
+                </a>
+                <a href="socket-fix-test.html" class="link-item">
+                    <div class="link-title">Socket Fix Test</div>
+                    <div class="link-description">Socket connection issue testing</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>👤 Profile System</h2>
+            <div class="links-grid">
+                <a href="profile-demo.html" class="link-item">
+                    <div class="link-title">Profile Demo</div>
+                    <div class="link-description">Profile system demonstration</div>
+                </a>
+                <a href="profile-selector.html" class="link-item">
+                    <div class="link-title">Profile Selector</div>
+                    <div class="link-description">Profile selection interface</div>
+                </a>
+                <a href="profile-switcher.html" class="link-item">
+                    <div class="link-title">Profile Switcher</div>
+                    <div class="link-description">Dynamic profile switching</div>
+                </a>
+                <a href="profile-showcase.html" class="link-item">
+                    <div class="link-title">Profile Showcase</div>
+                    <div class="link-description">Visual profile gallery</div>
+                </a>
+                <a href="profile-tester.html" class="link-item">
+                    <div class="link-title">Profile Tester</div>
+                    <div class="link-description">Profile functionality testing</div>
+                </a>
+                <a href="profile-performance-test.html" class="link-item">
+                    <div class="link-title">Profile Performance Test</div>
+                    <div class="link-description">Profile system performance analysis</div>
+                </a>
+                <a href="test-profiles.html" class="link-item">
+                    <div class="link-title">Test Profiles</div>
+                    <div class="link-description">Profile testing suite</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🎨 Alternative Overlays & Demos</h2>
+            <div class="links-grid">
+                <a href="demo.html" class="link-item">
+                    <div class="link-title">Demo</div>
+                    <div class="link-description">General demonstration page</div>
+                </a>
+                <a href="fresh-overlay.html" class="link-item">
+                    <div class="link-title">Fresh Overlay</div>
+                    <div class="link-description">Clean overlay implementation</div>
+                </a>
+                <a href="simple-overlay-test.html" class="link-item">
+                    <div class="link-title">Simple Overlay Test</div>
+                    <div class="link-description">Minimal overlay testing</div>
+                </a>
+                <a href="queue-minimal-test.html" class="link-item">
+                    <div class="link-title">Queue Minimal Test</div>
+                    <div class="link-description">Lightweight queue testing</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>🔍 Verification & Testing</h2>
+            <div class="links-grid">
+                <a href="fix-verification-test.html" class="link-item">
+                    <div class="link-title">Fix Verification Test</div>
+                    <div class="link-description">Verify implemented fixes</div>
+                </a>
+                <a href="requester-debug.html" class="link-item">
+                    <div class="link-title">Requester Debug</div>
+                    <div class="link-description">Song requester functionality testing</div>
+                </a>
+                <a href="quick-requester-test.html" class="link-item">
+                    <div class="link-title">Quick Requester Test</div>
+                    <div class="link-description">Fast requester validation</div>
+                </a>
+                <a href="simple-test.html" class="link-item">
+                    <div class="link-title">Simple Test</div>
+                    <div class="link-description">Basic functionality testing</div>
+                </a>
+                <a href="test.html" class="link-item">
+                    <div class="link-title">Test</div>
+                    <div class="link-description">General testing page</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🚀 StreamerSongList Overlay Project | Built for Twitch Streaming</p>
+            <p>Use the main <strong>Queue Overlay</strong> for production streaming</p>
+        </div>
+    </div>
+</body>
+</html>
