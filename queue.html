@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!--
+    NAMING CONVENTIONS USED IN THIS PROJECT:
+    
+    Files:
+    - HTML files: kebab-case (queue.html, profile-selector.html)
+    - CSS files: kebab-case (queue.css, profiles.css)
+    - JS files: kebab-case (profiles.js, profile-config.js)
+    - Library files: kebab-case in lib/ folder (streamersonglist.js)
+    
+    IDs and Classes:
+    - HTML IDs: kebab-case (queue-wrapper, profile-selector)
+    - CSS classes: kebab-case (.queue-item, .profile-button)
+    
+    JavaScript:
+    - Variables: camelCase (streamerName, maxQueueItems, queueEmptyMessage)
+    - Constants: camelCase (apiUrl, streamerId, allCaps)
+    - Functions: camelCase (loadProfile, updateQueue)
+    - Objects: camelCase (profiles, userProfiles)
+    
+    CSS:
+    - Custom properties: kebab-case (--primary-color, --font-size)
+    - Class names: kebab-case (.queue-container, .song-title)
+    - Animation names: kebab-case (fade-in, slide-up)
+-->
+<html lang="en">
+    <head>
+        <title>StreamerSongList Queue Overlay</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=1024, height=768">
+        <link rel="stylesheet" href="queue.css"/>
+        <link rel="stylesheet" href="profiles.css"/>
+
+        <script src="lib/jquery-3.2.1.min.js"></script>
+        <script src="profiles.js" defer></script>
+        <script src="profile-config.js" defer></script>
+        <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" defer></script>
+        <script src="lib/streamersonglist.js" defer></script>
+    </head>
+    <body>
+        <div id="queue-wrapper">
+            <!-- Queue content will be dynamically inserted here -->
+        </div>
+    </body>
+</html>
