@@ -1,12 +1,12 @@
 /* Import superhero comic book fonts */
-@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Creepster&family=Bungee&family=Fredoka+One:wght@400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Audiowide&family=Bungee&family=Press+Start+2P&family=Russo+One&display=swap');
 
 /* 4:3 Aspect Ratio Overlay Design */
 body {
     background: transparent;
     margin: 0;
     padding: 0;
-    font-family: 'Bangers', 'Arial', sans-serif;
+    font-family: 'Orbitron', 'Audiowide', monospace;
     overflow: hidden;
     width: 1024px;
     height: 691px;
@@ -112,7 +112,7 @@ body {
 
 /* Song position display */
 .song-position {
-    font-family: 'Fredoka One', 'Bangers', sans-serif;
+    font-family: 'Press Start 2P', 'Orbitron', monospace;
     font-size: 48px;
     font-weight: bold;
     color: #FFD700;
@@ -132,7 +132,7 @@ body {
 
 /* Song title */
 .song-title {
-    font-family: 'Bangers', sans-serif;
+    font-family: 'Audiowide', 'Orbitron', sans-serif;
     font-size: 64px;
     font-weight: bold;
     color: #FFFFFF;
@@ -156,7 +156,7 @@ body {
 
 /* Song artist */
 .song-artist {
-    font-family: 'Bangers', sans-serif;
+    font-family: 'Bungee', 'Orbitron', sans-serif;
     font-size: 48px;
     font-weight: bold;
     color: #FF6B35;
@@ -177,7 +177,7 @@ body {
 
 /* Song requester */
 .song-requester {
-    font-family: 'Fredoka One', sans-serif;
+    font-family: 'Russo One', 'Orbitron', sans-serif;
     font-size: 36px;
     font-weight: bold;
     color: #9C27B0;
@@ -197,7 +197,7 @@ body {
 
 /* Legacy song-text class for empty queue message */
 .song-text {
-    font-family: 'Bangers', sans-serif;
+    font-family: 'Audiowide', 'Orbitron', sans-serif;
     font-size: 64px;
     font-weight: bold;
     color: #FFFFFF;
@@ -455,7 +455,7 @@ body {
     padding: 15px 20px;
     border-radius: 15px;
     border: 3px solid #FFD700;
-    font-family: 'Fredoka One', sans-serif;
+    font-family: 'Russo One', 'Orbitron', sans-serif;
     font-size: 18px;
     color: white;
     z-index: 100;
@@ -492,7 +492,7 @@ body {
     padding: 12px 18px;
     border-radius: 20px;
     border: 2px solid #FFD700;
-    font-family: 'Fredoka One', sans-serif;
+    font-family: 'Russo One', 'Orbitron', sans-serif;
     font-size: 18px;
     color: white;
     font-weight: bold;
@@ -512,7 +512,7 @@ body {
     padding: 25px 35px;
     border-radius: 20px;
     border: 4px solid #FFD700;
-    font-family: 'Bangers', sans-serif;
+    font-family: 'Audiowide', 'Orbitron', sans-serif;
     font-size: 32px;
     font-weight: bold;
     text-align: center;
