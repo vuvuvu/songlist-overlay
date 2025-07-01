@@ -12,6 +12,8 @@ body {
     height: 691px;
     position: relative;
     letter-spacing: 2px;
+    border: 2px solid rgba(128, 128, 128, 0.3);
+    box-sizing: border-box;
 }
 
 /* Main queue container - 4:3 aspect ratio */
@@ -232,7 +234,9 @@ body {
     background: linear-gradient(135deg, rgba(220, 20, 60, 0.8), rgba(178, 34, 34, 0.8));
     border-radius: 12px;
     border: 2px solid rgba(220, 20, 60, 0.6);
-    box-shadow: 0 4px 15px rgba(220, 20, 60, 0.4);
+    box-shadow: 
+        0 4px 15px rgba(220, 20, 60, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
     width: 90%;
     max-width: 800px;
     display: flex;
@@ -298,19 +302,25 @@ body {
 .cycling-song:nth-child(1) {
     background: linear-gradient(135deg, rgba(40, 40, 40, 0.8), rgba(50, 50, 50, 0.8));
     border: 1px solid rgba(80, 80, 80, 0.6);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.4),
+        0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .cycling-song:nth-child(2) {
     background: linear-gradient(135deg, rgba(40, 40, 40, 0.6), rgba(50, 50, 50, 0.6));
     border: 1px solid rgba(80, 80, 80, 0.4);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.06);
 }
 
 .cycling-song:nth-child(3) {
     background: linear-gradient(135deg, rgba(40, 40, 40, 0.4), rgba(50, 50, 50, 0.4));
     border: 1px solid rgba(80, 80, 80, 0.3);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.04);
 }
 
 .song-position.queue {
