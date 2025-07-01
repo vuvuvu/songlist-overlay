@@ -29,3 +29,9 @@ A clean, animated queue overlay for StreamerSongList with flip animations and op
 - **No Double Effects**: Clean single animation per transition
 
 This is a production-ready build with only essential files for deployment.
+
+## Credits
+
+- **Author**: [vUvuvu](https://github.com/vUvuvu)
+
+
