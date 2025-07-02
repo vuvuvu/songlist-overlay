@@ -94,7 +94,7 @@ body {
 /* Song position display */
 .song-position {
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 48px;
+    font-size: 58px;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
@@ -113,7 +113,7 @@ body {
 /* Song title */
 .song-title {
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 64px;
+    font-size: 74px;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
@@ -135,7 +135,7 @@ body {
 /* Song artist */
 .song-artist {
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 48px;
+    font-size: 58px;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
@@ -156,7 +156,7 @@ body {
 /* Song requester */
 .song-requester {
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 36px;
+    font-size: 46px;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
@@ -176,7 +176,7 @@ body {
 /* Legacy song-text class for empty queue message */
 .song-text {
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 64px;
+    font-size: 74px;
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
@@ -217,7 +217,7 @@ body {
 }
 
 .song-position.current {
-    font-size: 28px;
+    font-size: 38px;
     color: #FFFFFF;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
@@ -233,7 +233,7 @@ body {
 }
 
 .song-title.current {
-    font-size: 32px;
+    font-size: 42px;
     color: #FFFFFF;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
     margin: 0;
@@ -241,14 +241,14 @@ body {
 }
 
 .song-artist.current {
-    font-size: 22px;
+    font-size: 32px;
     color: #FFE4E1;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     margin: 0;
 }
 
 .song-requester.current {
-    font-size: 16px;
+    font-size: 26px;
     color: #FFE4E1;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     margin: 0;
@@ -282,7 +282,7 @@ body {
 }
 
 .song-position.queue {
-    font-size: 20px;
+    font-size: 30px;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     min-width: 30px;
@@ -301,7 +301,7 @@ body {
 }
 
 .song-title.queue {
-    font-size: 24px;
+    font-size: 34px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
     margin: 0;
     font-weight: bold;
@@ -312,7 +312,7 @@ body {
 .cycling-song:nth-child(3) .song-title.queue { color: #E0E0E0; }
 
 .song-artist.queue {
-    font-size: 16px;
+    font-size: 26px;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     margin: 0;
 }
@@ -322,7 +322,7 @@ body {
 .cycling-song:nth-child(3) .song-artist.queue { color: #B0B0B0; }
 
 .song-requester.queue {
-    font-size: 12px;
+    font-size: 22px;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     margin: 0;
     opacity: 0.8;
@@ -402,7 +402,7 @@ body {
     background: transparent;
     padding: 15px 20px;
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 18px;
+    font-size: 28px;
     color: white;
     z-index: 100;
 }
@@ -413,7 +413,7 @@ body {
 }
 
 .connection-status {
-    font-size: 14px;
+    font-size: 24px;
     opacity: 0.8;
 }
 
@@ -433,7 +433,7 @@ body {
     background: transparent;
     padding: 12px 18px;
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 18px;
+    font-size: 28px;
     color: white;
     font-weight: bold;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
@@ -450,7 +450,7 @@ body {
     color: white;
     padding: 25px 35px;
     font-family: 'Josefin Sans', sans-serif;
-    font-size: 32px;
+    font-size: 42px;
     font-weight: bold;
     text-align: center;
     text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8);
