@@ -8,8 +8,8 @@ body {
     padding: 0;
     font-family: 'Bangers', 'Arial', sans-serif;
     overflow: hidden;
-    width: 1024px;              
-    height: 691px;
+    width: 900px;              
+    height: 675px;
     position: relative;
     letter-spacing: 2px;
     box-sizing: border-box;
@@ -17,8 +17,8 @@ body {
 
 /* Main queue container - 4:3 aspect ratio */
 #queue-wrapper {
-    width: 1024px;
-    height: 691px;
+    width: 900px;
+    height: 675px;
     background: transparent;
     display: flex;
     flex-direction: column;
@@ -638,7 +638,7 @@ body {
 }
 
 /* Responsive adjustments for smaller screens */
-@media (max-width: 1024px) {
+@media (max-width: 900px) {
     body, #queue-wrapper {
         width: 100vw;
         height: 75vw; /* Maintain 4:3 ratio */
