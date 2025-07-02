@@ -96,11 +96,11 @@ body {
     font-family: 'Josefin Sans', sans-serif;
     font-size: 48px;
     font-weight: bold;
-    color: #FFD700;
+    color: #FFFFFF;
     text-shadow: 
-        3px 3px 0px #FF6B35,
-        6px 6px 0px #FF1744,
-        9px 9px 15px rgba(0, 0, 0, 0.8);
+        2px 2px 0px #808080,
+        4px 4px 0px #404040,
+        6px 6px 15px rgba(0, 0, 0, 0.8);
     margin-bottom: 25px;
     display: block;
     letter-spacing: 3px;
@@ -117,9 +117,9 @@ body {
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
-        3px 3px 0px #4CAF50,
-        6px 6px 0px #2196F3,
-        9px 9px 20px rgba(0, 0, 0, 0.9);
+        2px 2px 0px #808080,
+        4px 4px 0px #404040,
+        6px 6px 20px rgba(0, 0, 0, 0.9);
     line-height: 1.1;
     word-wrap: break-word;
     max-width: 100%;
@@ -137,10 +137,10 @@ body {
     font-family: 'Josefin Sans', sans-serif;
     font-size: 48px;
     font-weight: bold;
-    color: #FF6B35;
+    color: #FFFFFF;
     text-shadow: 
-        2px 2px 0px #FFFFFF,
-        4px 4px 0px #FF1744,
+        2px 2px 0px #808080,
+        4px 4px 0px #404040,
         6px 6px 15px rgba(0, 0, 0, 0.8);
     line-height: 1.1;
     word-wrap: break-word;
@@ -158,10 +158,10 @@ body {
     font-family: 'Josefin Sans', sans-serif;
     font-size: 36px;
     font-weight: bold;
-    color: #9C27B0;
+    color: #FFFFFF;
     text-shadow: 
-        2px 2px 0px #FFFFFF,
-        4px 4px 0px #E91E63,
+        2px 2px 0px #808080,
+        4px 4px 0px #404040,
         6px 6px 12px rgba(0, 0, 0, 0.8);
     line-height: 1.1;
     word-wrap: break-word;
@@ -180,10 +180,10 @@ body {
     font-weight: bold;
     color: #FFFFFF;
     text-shadow: 
-        3px 3px 0px #4CAF50,
-        6px 6px 0px #2196F3,
-        9px 9px 0px #9C27B0,
-        12px 12px 25px rgba(0, 0, 0, 0.9);
+        2px 2px 0px #808080,
+        4px 4px 0px #404040,
+        6px 6px 0px #202020,
+        8px 8px 25px rgba(0, 0, 0, 0.9);
     line-height: 1.1;
     word-wrap: break-word;
     max-width: 100%;
@@ -580,16 +580,16 @@ body {
 @keyframes titleGlow {
     0%, 100% {
         text-shadow: 
-            3px 3px 0px #4CAF50,
-            6px 6px 0px #2196F3,
-            9px 9px 20px rgba(0, 0, 0, 0.9);
+            2px 2px 0px #808080,
+            4px 4px 0px #404040,
+            6px 6px 20px rgba(0, 0, 0, 0.9);
     }
     50% {
         text-shadow: 
-            3px 3px 0px #4CAF50,
-            6px 6px 0px #2196F3,
-            9px 9px 30px rgba(76, 175, 80, 0.8),
-            12px 12px 40px rgba(33, 150, 243, 0.6);
+            2px 2px 0px #808080,
+            4px 4px 0px #404040,
+            6px 6px 30px rgba(128, 128, 128, 0.8),
+            8px 8px 40px rgba(64, 64, 64, 0.6);
     }
 }
 
@@ -598,42 +598,42 @@ body {
     0%, 100% {
         transform: scale(1);
         text-shadow: 
-            2px 2px 0px #FFFFFF,
-            4px 4px 0px #FF1744,
+            2px 2px 0px #808080,
+            4px 4px 0px #404040,
             6px 6px 15px rgba(0, 0, 0, 0.8);
     }
     50% {
         transform: scale(1.02);
         text-shadow: 
-            2px 2px 0px #FFFFFF,
-            4px 4px 0px #FF1744,
-            6px 6px 25px rgba(255, 107, 53, 0.8),
-            8px 8px 35px rgba(255, 23, 68, 0.6);
+            2px 2px 0px #808080,
+            4px 4px 0px #404040,
+            6px 6px 25px rgba(128, 128, 128, 0.8),
+            8px 8px 35px rgba(64, 64, 64, 0.6);
     }
 }
 
 /* Requester shimmer animation */
 @keyframes requesterShimmer {
     0%, 100% {
-        color: #9C27B0;
+        color: #FFFFFF;
         text-shadow: 
-            2px 2px 0px #FFFFFF,
-            4px 4px 0px #E91E63,
+            2px 2px 0px #808080,
+            4px 4px 0px #404040,
             6px 6px 12px rgba(0, 0, 0, 0.8);
     }
     33% {
-        color: #E91E63;
+        color: #FFFFFF;
         text-shadow: 
-            2px 2px 0px #FFFFFF,
-            4px 4px 0px #9C27B0,
-            6px 6px 20px rgba(156, 39, 176, 0.8);
+            2px 2px 0px #909090,
+            4px 4px 0px #505050,
+            6px 6px 20px rgba(128, 128, 128, 0.8);
     }
     66% {
-        color: #673AB7;
+        color: #FFFFFF;
         text-shadow: 
-            2px 2px 0px #FFFFFF,
-            4px 4px 0px #3F51B5,
-            6px 6px 20px rgba(103, 58, 183, 0.8);
+            2px 2px 0px #707070,
+            4px 4px 0px #303030,
+            6px 6px 20px rgba(96, 96, 96, 0.8);
     }
 }
 
